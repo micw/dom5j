@@ -15,7 +15,7 @@ package org.dom5j.dtd;
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.7 $
  */
-public class AttributeDecl {
+public class AttributeDecl implements DTDDeclaration {
     /** Holds value of property elementName. */
     private String elementName;
 

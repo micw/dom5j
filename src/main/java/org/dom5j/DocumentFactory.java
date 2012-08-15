@@ -50,24 +50,24 @@ public class DocumentFactory implements Serializable {
     protected transient QNameCache cache;
 
     /** Default namespace prefix -> URI mappings for XPath expressions to use */
-    private Map xpathNamespaceURIs;
+    private Map<String,String> xpathNamespaceURIs;
 
     private static SingletonStrategy createSingleton() {
         SingletonStrategy result = null;
         
         String documentFactoryClassName;
         try {
-            documentFactoryClassName = System.getProperty("org.dom4j.factory",
-                    "org.dom4j.DocumentFactory");
+            documentFactoryClassName = System.getProperty("org.dom5j.factory",
+                    "org.dom5j.DocumentFactory");
         } catch (Exception e) {
-            documentFactoryClassName = "org.dom4j.DocumentFactory";
+            documentFactoryClassName = "org.dom5j.DocumentFactory";
         }
 
         try {
             String singletonClass = System.getProperty(
-                    "org.dom4j.DocumentFactory.singleton.strategy",
-                    "org.dom4j.util.SimpleSingleton");
-            Class clazz = Class.forName(singletonClass);
+                    "org.dom5j.DocumentFactory.singleton.strategy",
+                    "org.dom5j.util.SimpleSingleton");
+            Class<?> clazz = Class.forName(singletonClass);
             result = (SingletonStrategy) clazz.newInstance();
         } catch (Exception e) {
             result = new SimpleSingleton();
@@ -191,7 +191,7 @@ public class DocumentFactory implements Serializable {
     }
 
     public ProcessingInstruction createProcessingInstruction(String target,
-            Map data) {
+            Map<String,String> data) {
         return new DefaultProcessingInstruction(target, data);
     }
 
@@ -324,7 +324,7 @@ public class DocumentFactory implements Serializable {
      * 
      * @return DOCUMENT ME!
      */
-    public List getQNames() {
+    public List<QName> getQNames() {
         return cache.getQNames();
     }
 
@@ -337,7 +337,7 @@ public class DocumentFactory implements Serializable {
      *         namespace URI. This value could well be null to indicate no
      *         namespace URIs are being mapped.
      */
-    public Map getXPathNamespaceURIs() {
+    public Map<String,String> getXPathNamespaceURIs() {
         return xpathNamespaceURIs;
     }
 
@@ -349,7 +349,7 @@ public class DocumentFactory implements Serializable {
      * @param namespaceURIs
      *            DOCUMENT ME!
      */
-    public void setXPathNamespaceURIs(Map namespaceURIs) {
+    public void setXPathNamespaceURIs(Map<String,String> namespaceURIs) {
         this.xpathNamespaceURIs = namespaceURIs;
     }
 
@@ -372,7 +372,7 @@ public class DocumentFactory implements Serializable {
         try {
             // I'll use the current class loader
             // that loaded me to avoid problems in J2EE and web apps
-            Class theClass = Class.forName(className, true,
+            Class<?> theClass = Class.forName(className, true,
                     DocumentFactory.class.getClassLoader());
 
             return (DocumentFactory) theClass.newInstance();

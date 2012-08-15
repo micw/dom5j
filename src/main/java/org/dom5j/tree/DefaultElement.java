@@ -8,6 +8,7 @@
 package org.dom5j.tree;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,6 +31,9 @@ import org.dom5j.QName;
  * 
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.59 $
+ * 
+ * FIXME: this class contains hundreds of (similar) lines of code dealing with "content" or "attributes" which are null, a node or a list of nodes. It is better to always use a list here!
+ * 
  */
 public class DefaultElement extends AbstractElement {
     /** The <code>DocumentFactory</code> instance used by default */
@@ -54,7 +58,7 @@ public class DefaultElement extends AbstractElement {
      */
     private Object content;
 
-    /** Lazily constructes list of attributes */
+    /** Lazily constructes list of attributes or a single attribute */
     private Object attributes;
 
     public DefaultElement(String name) {
@@ -69,7 +73,7 @@ public class DefaultElement extends AbstractElement {
         this.qname = qname;
 
         if (attributeCount > 1) {
-            this.attributes = new ArrayList(attributeCount);
+            this.attributes = new ArrayList<Attribute>(attributeCount);
         }
     }
 
@@ -141,7 +145,8 @@ public class DefaultElement extends AbstractElement {
         final Object contentShadow = content;
 
         if (contentShadow instanceof List) {
-            List list = (List) contentShadow;
+            @SuppressWarnings("unchecked")
+            List<Node> list = (List<Node>) contentShadow;
 
             int size = list.size();
 
@@ -209,7 +214,8 @@ public class DefaultElement extends AbstractElement {
             final Object contentShadow = content;
 
             if (contentShadow instanceof List) {
-                List list = (List) contentShadow;
+                @SuppressWarnings("unchecked")
+                List<Node> list = (List<Node>) contentShadow;
 
                 int size = list.size();
 
@@ -259,7 +265,8 @@ public class DefaultElement extends AbstractElement {
             final Object contentShadow = content;
 
             if (contentShadow instanceof List) {
-                List list = (List) contentShadow;
+                @SuppressWarnings("unchecked")
+                List<Node> list = (List<Node>) contentShadow;
 
                 int size = list.size();
 
@@ -292,8 +299,8 @@ public class DefaultElement extends AbstractElement {
         }
     }
 
-    public List declaredNamespaces() {
-        BackedList answer = createResultList();
+    public List<Namespace> declaredNamespaces() {
+        BackedList<Namespace> answer = createResultList();
 
         // if (getNamespaceURI().length() > 0) {
         //
@@ -303,7 +310,8 @@ public class DefaultElement extends AbstractElement {
         final Object contentShadow = content;
 
         if (contentShadow instanceof List) {
-            List list = (List) contentShadow;
+            @SuppressWarnings("unchecked")
+            List<Node> list = (List<Node>) contentShadow;
 
             int size = list.size();
 
@@ -311,27 +319,28 @@ public class DefaultElement extends AbstractElement {
                 Object object = list.get(i);
 
                 if (object instanceof Namespace) {
-                    answer.addLocal(object);
+                    answer.addLocal((Namespace)object);
                 }
             }
         } else {
             if (contentShadow instanceof Namespace) {
-                answer.addLocal(contentShadow);
+                answer.addLocal((Namespace)contentShadow);
             }
         }
 
         return answer;
     }
 
-    public List additionalNamespaces() {
+    public List<Namespace> additionalNamespaces() {
         final Object contentShadow = content;
 
         if (contentShadow instanceof List) {
-            List list = (List) contentShadow;
+            @SuppressWarnings("unchecked")
+            List<Node> list = (List<Node>) contentShadow;
 
             int size = list.size();
 
-            BackedList answer = createResultList();
+            BackedList<Namespace> answer = createResultList();
 
             for (int i = 0; i < size; i++) {
                 Object object = list.get(i);
@@ -361,13 +370,14 @@ public class DefaultElement extends AbstractElement {
         }
     }
 
-    public List additionalNamespaces(String defaultNamespaceURI) {
+    public List<Namespace> additionalNamespaces(String defaultNamespaceURI) {
         final Object contentShadow = content;
 
         if (contentShadow instanceof List) {
-            List list = (List) contentShadow;
+            @SuppressWarnings("unchecked")
+            List<Node> list = (List<Node>) contentShadow;
 
-            BackedList answer = createResultList();
+            BackedList<Namespace> answer = createResultList();
 
             int size = list.size();
 
@@ -398,13 +408,14 @@ public class DefaultElement extends AbstractElement {
     }
 
     // Processing instruction API
-    public List processingInstructions() {
+    public List<ProcessingInstruction> processingInstructions() {
         final Object contentShadow = content;
 
         if (contentShadow instanceof List) {
-            List list = (List) contentShadow;
+            @SuppressWarnings("unchecked")
+            List<Node> list = (List<Node>) contentShadow;
 
-            BackedList answer = createResultList();
+            BackedList<ProcessingInstruction> answer = createResultList();
 
             int size = list.size();
 
@@ -412,27 +423,28 @@ public class DefaultElement extends AbstractElement {
                 Object object = list.get(i);
 
                 if (object instanceof ProcessingInstruction) {
-                    answer.addLocal(object);
+                    answer.addLocal((ProcessingInstruction)object);
                 }
             }
 
             return answer;
         } else {
             if (contentShadow instanceof ProcessingInstruction) {
-                return createSingleResultList(contentShadow);
+                return createSingleResultList((ProcessingInstruction)contentShadow);
             }
 
             return createEmptyList();
         }
     }
 
-    public List processingInstructions(String target) {
+    public List<ProcessingInstruction> processingInstructions(String target) {
         final Object shadow = content;
 
         if (shadow instanceof List) {
-            List list = (List) shadow;
+            @SuppressWarnings("unchecked")
+            List<Node> list = (List<Node>) shadow;
 
-            BackedList answer = createResultList();
+            BackedList<ProcessingInstruction> answer = createResultList();
 
             int size = list.size();
 
@@ -466,7 +478,8 @@ public class DefaultElement extends AbstractElement {
         final Object shadow = content;
 
         if (shadow instanceof List) {
-            List list = (List) shadow;
+            @SuppressWarnings("unchecked")
+            List<Node> list = (List<Node>) shadow;
 
             int size = list.size();
 
@@ -498,9 +511,10 @@ public class DefaultElement extends AbstractElement {
         final Object shadow = content;
 
         if (shadow instanceof List) {
-            List list = (List) shadow;
+            @SuppressWarnings("unchecked")
+            List<Node> list = (List<Node>) shadow;
 
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
+            for (Iterator<Node> iter = list.iterator(); iter.hasNext();) {
                 Object object = iter.next();
 
                 if (object instanceof ProcessingInstruction) {
@@ -532,7 +546,8 @@ public class DefaultElement extends AbstractElement {
         final Object contentShadow = content;
 
         if (contentShadow instanceof List) {
-            List list = (List) contentShadow;
+            @SuppressWarnings("unchecked")
+            List<Node> list = (List<Node>) contentShadow;
 
             int size = list.size();
 
@@ -564,7 +579,8 @@ public class DefaultElement extends AbstractElement {
         final Object contentShadow = content;
 
         if (contentShadow instanceof List) {
-            List list = (List) contentShadow;
+            @SuppressWarnings("unchecked")
+            List<Node> list = (List<Node>) contentShadow;
 
             int size = list.size();
 
@@ -596,11 +612,11 @@ public class DefaultElement extends AbstractElement {
         return element(getDocumentFactory().createQName(name, namespace));
     }
 
-    public void setContent(List content) {
+    public void setContent(List<Node> content) {
         contentRemoved();
 
         if (content instanceof ContentListFacade) {
-            content = ((ContentListFacade) content).getBackingList();
+            content = ((ContentListFacade<Node>) content).getBackingList();
         }
 
         if (content == null) {
@@ -608,7 +624,7 @@ public class DefaultElement extends AbstractElement {
         } else {
             int size = content.size();
 
-            List newContent = createContentList(size);
+            List<Node> newContent = createContentList(size);
 
             for (int i = 0; i < size; i++) {
                 Object object = content.get(i);
@@ -649,7 +665,8 @@ public class DefaultElement extends AbstractElement {
             Object node;
 
             if (contentShadow instanceof List) {
-                List list = (List) contentShadow;
+                @SuppressWarnings("unchecked")
+                List<Node> list = (List<Node>) contentShadow;
 
                 if (index >= list.size()) {
                     return null;
@@ -676,7 +693,8 @@ public class DefaultElement extends AbstractElement {
         final Object contentShadow = content;
 
         if (contentShadow instanceof List) {
-            List list = (List) contentShadow;
+            @SuppressWarnings("unchecked")
+            List<Node> list = (List<Node>) contentShadow;
 
             return list.indexOf(node);
         } else {
@@ -692,7 +710,8 @@ public class DefaultElement extends AbstractElement {
         final Object contentShadow = content;
 
         if (contentShadow instanceof List) {
-            List list = (List) contentShadow;
+            @SuppressWarnings("unchecked")
+            List<Node> list = (List<Node>) contentShadow;
 
             return list.size();
         } else {
@@ -700,45 +719,47 @@ public class DefaultElement extends AbstractElement {
         }
     }
 
-    public Iterator nodeIterator() {
+    public Iterator<Node> nodeIterator() {
         final Object contentShadow = content;
 
         if (contentShadow instanceof List) {
-            List list = (List) contentShadow;
+            @SuppressWarnings("unchecked")
+            List<Node> list = (List<Node>) contentShadow;
 
             return list.iterator();
         } else {
             if (contentShadow != null) {
-                return createSingleIterator(contentShadow);
+                return createSingleIterator((Node)contentShadow);
             } else {
-                return EMPTY_ITERATOR;
+                return Collections.<Node>emptyList().iterator();
             }
         }
     }
 
-    public List attributes() {
-        return new ContentListFacade(this, attributeList());
+    public List<Attribute> attributes() {
+        return new ContentListFacade<Attribute>(this, attributeList());
     }
 
-    public void setAttributes(List attributes) {
-        if (attributes instanceof ContentListFacade) {
-            attributes = ((ContentListFacade) attributes).getBackingList();
-        }
+    public void setAttributes(List<Attribute> attributes) {
+//        if (attributes instanceof ContentListFacade) {
+//            attributes = (ContentListFacade attributes).getBackingList();
+//        }
 
         this.attributes = attributes;
     }
 
-    public Iterator attributeIterator() {
+    @SuppressWarnings("unchecked")
+    public Iterator<Attribute> attributeIterator() {
         final Object attributesShadow = this.attributes;
 
         if (attributesShadow instanceof List) {
-            List list = (List) attributesShadow;
+            List<Attribute> list = (List<Attribute>) attributesShadow;
 
             return list.iterator();
         } else if (attributesShadow != null) {
-            return createSingleIterator(attributesShadow);
+            return createSingleIterator((Attribute)attributesShadow);
         } else {
-            return EMPTY_ITERATOR;
+            return Collections.<Attribute>emptyList().iterator();
         }
     }
 
@@ -746,7 +767,8 @@ public class DefaultElement extends AbstractElement {
         final Object attributesShadow = this.attributes;
 
         if (attributesShadow instanceof List) {
-            List list = (List) attributesShadow;
+            @SuppressWarnings("unchecked")
+            List<Attribute> list = (List<Attribute>) attributesShadow;
 
             return (Attribute) list.get(index);
         } else if ((attributesShadow != null) && (index == 0)) {
@@ -756,11 +778,12 @@ public class DefaultElement extends AbstractElement {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public int attributeCount() {
         final Object attributesShadow = this.attributes;
 
         if (attributesShadow instanceof List) {
-            List list = (List) attributesShadow;
+            List<Attribute> list = (List<Attribute>) attributesShadow;
 
             return list.size();
         } else {
@@ -768,11 +791,12 @@ public class DefaultElement extends AbstractElement {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public Attribute attribute(String name) {
         final Object attributesShadow = this.attributes;
 
         if (attributesShadow instanceof List) {
-            List list = (List) attributesShadow;
+            List<Attribute> list = (List<Attribute>) attributesShadow;
 
             int size = list.size();
 
@@ -794,11 +818,12 @@ public class DefaultElement extends AbstractElement {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public Attribute attribute(QName qName) {
         final Object attributesShadow = this.attributes;
 
         if (attributesShadow instanceof List) {
-            List list = (List) attributesShadow;
+            List<Attribute> list = (List<Attribute>) attributesShadow;
 
             int size = list.size();
 
@@ -852,12 +877,13 @@ public class DefaultElement extends AbstractElement {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public boolean remove(Attribute attribute) {
         boolean answer = false;
         final Object attributesShadow = this.attributes;
 
         if (attributesShadow instanceof List) {
-            List list = (List) attributesShadow;
+            List<Attribute> list = (List<Attribute>) attributesShadow;
 
             answer = list.remove(attribute);
 
@@ -897,6 +923,7 @@ public class DefaultElement extends AbstractElement {
 
     // Implementation methods
     // -------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     protected void addNewNode(Node node) {
         final Object contentShadow = content;
 
@@ -904,13 +931,13 @@ public class DefaultElement extends AbstractElement {
             this.content = node;
         } else {
             if (contentShadow instanceof List) {
-                List list = (List) contentShadow;
+                List<Node> list = (List<Node>) contentShadow;
 
                 list.add(node);
             } else {
-                List list = createContentList();
+                List<Node> list = createContentList();
 
-                list.add(contentShadow);
+                list.add((Node)contentShadow);
 
                 list.add(node);
 
@@ -921,6 +948,7 @@ public class DefaultElement extends AbstractElement {
         childAdded(node);
     }
 
+    @SuppressWarnings("unchecked")
     protected boolean removeNode(Node node) {
         boolean answer = false;
         final Object contentShadow = content;
@@ -931,7 +959,7 @@ public class DefaultElement extends AbstractElement {
 
                 answer = true;
             } else if (contentShadow instanceof List) {
-                List list = (List) contentShadow;
+                List<Node> list = (List<Node>) contentShadow;
 
                 answer = list.remove(node);
             }
@@ -944,16 +972,17 @@ public class DefaultElement extends AbstractElement {
         return answer;
     }
 
-    protected List contentList() {
+    @SuppressWarnings("unchecked")
+    protected List<Node> contentList() {
         final Object contentShadow = content;
 
         if (contentShadow instanceof List) {
-            return (List) contentShadow;
+            return (List<Node>) contentShadow;
         } else {
-            List list = createContentList();
+            List<Node> list = createContentList();
 
             if (contentShadow != null) {
-                list.add(contentShadow);
+                list.add((Node)contentShadow);
             }
 
             this.content = list;
@@ -962,21 +991,22 @@ public class DefaultElement extends AbstractElement {
         }
     }
 
-    protected List attributeList() {
+    @SuppressWarnings("unchecked")
+    protected List<Attribute> attributeList() {
         final Object attributesShadow = this.attributes;
 
         if (attributesShadow instanceof List) {
-            return (List) attributesShadow;
+            return (List<Attribute>) attributesShadow;
         } else if (attributesShadow != null) {
-            List list = createAttributeList();
+            List<Attribute> list = createAttributeList();
 
-            list.add(attributesShadow);
+            list.add((Attribute)attributesShadow);
 
             this.attributes = list;
 
             return list;
         } else {
-            List list = createAttributeList();
+            List<Attribute> list = createAttributeList();
 
             this.attributes = list;
 
@@ -984,21 +1014,22 @@ public class DefaultElement extends AbstractElement {
         }
     }
 
-    protected List attributeList(int size) {
+    @SuppressWarnings("unchecked")
+    protected List<Attribute> attributeList(int size) {
         final Object attributesShadow = this.attributes;
 
         if (attributesShadow instanceof List) {
-            return (List) attributesShadow;
+            return (List<Attribute>) attributesShadow;
         } else if (attributesShadow != null) {
-            List list = createAttributeList(size);
+            List<Attribute> list = createAttributeList(size);
 
-            list.add(attributesShadow);
+            list.add((Attribute)attributesShadow);
 
             this.attributes = list;
 
             return list;
         } else {
-            List list = createAttributeList(size);
+            List<Attribute> list = createAttributeList(size);
 
             this.attributes = list;
 
@@ -1006,7 +1037,7 @@ public class DefaultElement extends AbstractElement {
         }
     }
 
-    protected void setAttributeList(List attributeList) {
+    protected void setAttributeList(List<Attribute> attributeList) {
         this.attributes = attributeList;
     }
 

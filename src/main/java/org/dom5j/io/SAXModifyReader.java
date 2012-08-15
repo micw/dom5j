@@ -21,7 +21,7 @@ import org.xml.sax.XMLReader;
  * @author Wonne Keysers (Realsoftware.be)
  * 
  * @see org.dom5j.io.SAXReader
- * @see org.dom4j.io.XMLWriters
+ * @see org.dom5j.io.XMLWriters
  */
 class SAXModifyReader extends SAXReader {
     private XMLWriter xmlWriter;

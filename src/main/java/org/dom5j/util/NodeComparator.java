@@ -33,6 +33,7 @@ import org.dom5j.Text;
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.10 $
  */
+@SuppressWarnings({"rawtypes","unchecked"})
 public class NodeComparator implements Comparator {
     /**
      * Compares its two arguments for order. Returns a negative integer, zero,

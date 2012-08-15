@@ -97,10 +97,6 @@ public class BeanElement extends DefaultElement {
         return this;
     }
 
-    public void setAttributes(List attributes) {
-        throw new UnsupportedOperationException("Not implemented yet.");
-    }
-
     // Method overridden from AbstractElement
     public void setAttributes(Attributes attributes,
             NamespaceStack namespaceStack, boolean noNamespaceAttributes) {
@@ -108,7 +104,7 @@ public class BeanElement extends DefaultElement {
 
         if (className != null) {
             try {
-                Class beanClass = Class.forName(className, true,
+                Class<?> beanClass = Class.forName(className, true,
                         BeanElement.class.getClassLoader());
                 this.setData(beanClass.newInstance());
 
@@ -136,8 +132,10 @@ public class BeanElement extends DefaultElement {
         return DOCUMENT_FACTORY;
     }
 
+    @SuppressWarnings("rawtypes")
     protected BeanAttributeList getBeanAttributeList() {
-        return (BeanAttributeList) attributeList();
+        List result=attributeList();
+        return (BeanAttributeList) result;
     }
 
     /**
@@ -146,12 +144,14 @@ public class BeanElement extends DefaultElement {
      * 
      * @return DOCUMENT ME!
      */
-    protected List createAttributeList() {
-        return new BeanAttributeList(this);
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    protected List<Attribute> createAttributeList() {
+        return (List) new BeanAttributeList(this);
     }
 
-    protected List createAttributeList(int size) {
-        return new BeanAttributeList(this);
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    protected List<Attribute> createAttributeList(int size) {
+        return (List) new BeanAttributeList(this);
     }
 }
 

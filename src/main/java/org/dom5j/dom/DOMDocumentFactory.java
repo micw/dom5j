@@ -41,12 +41,12 @@ public class DOMDocumentFactory extends DocumentFactory implements
 
     static {
         try {
-            String defaultSingletonClass = "org.dom4j.util.SimpleSingleton";
+            String defaultSingletonClass = "org.dom5j.util.SimpleSingleton";
             Class clazz = null;
             try {
                 String singletonClass = defaultSingletonClass;
                 singletonClass = System.getProperty(
-                        "org.dom4j.dom.DOMDocumentFactory.singleton.strategy",
+                        "org.dom5j.dom.DOMDocumentFactory.singleton.strategy",
                         singletonClass);
                 clazz = Class.forName(singletonClass);
             } catch (Exception exc1) {

@@ -30,8 +30,8 @@ public class DocumentSource extends SAXSource {
      * <code>true</code> when passed this value as an argument then the
      * Transformer natively supports <i>dom4j </i>.
      */
-    public static final String DOM4J_FEATURE 
-            = "http://org.dom4j.io.DoucmentSource/feature";
+    public static final String DOM5J_FEATURE 
+            = "http://org.dom5j.io.DoucmentSource/feature";
 
     /** The XMLReader to use */
     private XMLReader xmlReader = new SAXWriter();

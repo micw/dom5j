@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,10 +48,6 @@ public abstract class AbstractElement extends AbstractBranch implements
     /** The <code>DocumentFactory</code> instance used by default */
     private static final DocumentFactory DOCUMENT_FACTORY = DocumentFactory
             .getInstance();
-
-    protected static final List EMPTY_LIST = Collections.EMPTY_LIST;
-
-    protected static final Iterator EMPTY_ITERATOR = EMPTY_LIST.iterator();
 
     protected static final boolean VERBOSE_TOSTRING = false;
 
@@ -144,7 +139,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 
         buffer.append(getXPathNameStep());
 
-        List mySiblings = parent.elements(getQName());
+        List<Element> mySiblings = parent.elements(getQName());
 
         if (mySiblings.size() > 1) {
             int idx = mySiblings.indexOf(this);
@@ -267,20 +262,20 @@ public abstract class AbstractElement extends AbstractBranch implements
     // -------------------------------------------------------------------------
     public Node node(int index) {
         if (index >= 0) {
-            List list = contentList();
+            List<Node> list = contentList();
 
             if (index >= list.size()) {
                 return null;
             }
 
-            Object node = list.get(index);
+            Node node = list.get(index);
 
             if (node != null) {
-                if (node instanceof Node) {
+//                if (node instanceof Node) {
                     return (Node) node;
-                } else {
-                    return getDocumentFactory().createText(node.toString());
-                }
+//                } else {
+//                    return getDocumentFactory().createText(node.toString());
+//                }
             }
         }
 
@@ -295,19 +290,19 @@ public abstract class AbstractElement extends AbstractBranch implements
         return contentList().size();
     }
 
-    public Iterator nodeIterator() {
+    public Iterator<Node> nodeIterator() {
         return contentList().iterator();
     }
 
     // Element methods
     // -------------------------------------------------------------------------
     public Element element(String name) {
-        List list = contentList();
+        List<Node> list = contentList();
 
         int size = list.size();
 
         for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
+            Node object = list.get(i);
 
             if (object instanceof Element) {
                 Element element = (Element) object;
@@ -322,12 +317,12 @@ public abstract class AbstractElement extends AbstractBranch implements
     }
 
     public Element element(QName qName) {
-        List list = contentList();
+        List<Node> list = contentList();
 
         int size = list.size();
 
         for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
+            Node object = list.get(i);
 
             if (object instanceof Element) {
                 Element element = (Element) object;
@@ -345,10 +340,10 @@ public abstract class AbstractElement extends AbstractBranch implements
         return element(getDocumentFactory().createQName(name, namespace));
     }
 
-    public List elements() {
-        List list = contentList();
+    public List<Element> elements() {
+        List<Node> list = contentList();
 
-        BackedList answer = createResultList();
+        BackedList<Element> answer = createResultList();
 
         int size = list.size();
 
@@ -356,22 +351,22 @@ public abstract class AbstractElement extends AbstractBranch implements
             Object object = list.get(i);
 
             if (object instanceof Element) {
-                answer.addLocal(object);
+                answer.addLocal((Element) object);
             }
         }
 
         return answer;
     }
 
-    public List elements(String name) {
-        List list = contentList();
+    public List<Element> elements(String name) {
+        List<Node> list = contentList();
 
-        BackedList answer = createResultList();
+        BackedList<Element> answer = createResultList();
 
         int size = list.size();
 
         for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
+            Node object = list.get(i);
 
             if (object instanceof Element) {
                 Element element = (Element) object;
@@ -385,15 +380,15 @@ public abstract class AbstractElement extends AbstractBranch implements
         return answer;
     }
 
-    public List elements(QName qName) {
-        List list = contentList();
+    public List<Element> elements(QName qName) {
+        List<Node> list = contentList();
 
-        BackedList answer = createResultList();
+        BackedList<Element> answer = createResultList();
 
         int size = list.size();
 
         for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
+            Node object = list.get(i);
 
             if (object instanceof Element) {
                 Element element = (Element) object;
@@ -407,39 +402,39 @@ public abstract class AbstractElement extends AbstractBranch implements
         return answer;
     }
 
-    public List elements(String name, Namespace namespace) {
+    public List<Element> elements(String name, Namespace namespace) {
         return elements(getDocumentFactory().createQName(name, namespace));
     }
 
-    public Iterator elementIterator() {
-        List list = elements();
+    public Iterator<Element> elementIterator() {
+        List<Element> list = elements();
 
         return list.iterator();
     }
 
-    public Iterator elementIterator(String name) {
-        List list = elements(name);
+    public Iterator<Element> elementIterator(String name) {
+        List<Element> list = elements(name);
 
         return list.iterator();
     }
 
-    public Iterator elementIterator(QName qName) {
-        List list = elements(qName);
+    public Iterator<Element> elementIterator(QName qName) {
+        List<Element> list = elements(qName);
 
         return list.iterator();
     }
 
-    public Iterator elementIterator(String name, Namespace ns) {
+    public Iterator<Element> elementIterator(String name, Namespace ns) {
         return elementIterator(getDocumentFactory().createQName(name, ns));
     }
 
     // Attribute methods
     // -------------------------------------------------------------------------
-    public List attributes() {
-        return new ContentListFacade(this, attributeList());
+    public List<Attribute> attributes() {
+        return new ContentListFacade<Attribute>(this, attributeList());
     }
 
-    public Iterator attributeIterator() {
+    public Iterator<Attribute> attributeIterator() {
         return attributeList().iterator();
     }
 
@@ -452,7 +447,7 @@ public abstract class AbstractElement extends AbstractBranch implements
     }
 
     public Attribute attribute(String name) {
-        List list = attributeList();
+        List<Attribute> list = attributeList();
 
         int size = list.size();
 
@@ -468,7 +463,7 @@ public abstract class AbstractElement extends AbstractBranch implements
     }
 
     public Attribute attribute(QName qName) {
-        List list = attributeList();
+        List<Attribute> list = attributeList();
 
         int size = list.size();
 
@@ -524,7 +519,7 @@ public abstract class AbstractElement extends AbstractBranch implements
                             attributeValue));
                 }
             } else {
-                List list = attributeList(size);
+                List<Attribute> list = attributeList(size);
 
                 list.clear();
 
@@ -646,7 +641,7 @@ public abstract class AbstractElement extends AbstractBranch implements
     }
 
     public boolean remove(Attribute attribute) {
-        List list = attributeList();
+        List<Attribute> list = attributeList();
 
         boolean answer = list.remove(attribute);
 
@@ -668,10 +663,10 @@ public abstract class AbstractElement extends AbstractBranch implements
 
     // Processing instruction API
     // -------------------------------------------------------------------------
-    public List processingInstructions() {
-        List list = contentList();
+    public List<ProcessingInstruction> processingInstructions() {
+        List<Node> list = contentList();
 
-        BackedList answer = createResultList();
+        BackedList<ProcessingInstruction> answer = createResultList();
 
         int size = list.size();
 
@@ -679,17 +674,17 @@ public abstract class AbstractElement extends AbstractBranch implements
             Object object = list.get(i);
 
             if (object instanceof ProcessingInstruction) {
-                answer.addLocal(object);
+                answer.addLocal((ProcessingInstruction)object);
             }
         }
 
         return answer;
     }
 
-    public List processingInstructions(String target) {
-        List list = contentList();
+    public List<ProcessingInstruction> processingInstructions(String target) {
+        List<Node> list = contentList();
 
-        BackedList answer = createResultList();
+        BackedList<ProcessingInstruction> answer = createResultList();
 
         int size = list.size();
 
@@ -709,7 +704,7 @@ public abstract class AbstractElement extends AbstractBranch implements
     }
 
     public ProcessingInstruction processingInstruction(String target) {
-        List list = contentList();
+        List<Node> list = contentList();
 
         int size = list.size();
 
@@ -729,10 +724,10 @@ public abstract class AbstractElement extends AbstractBranch implements
     }
 
     public boolean removeProcessingInstruction(String target) {
-        List list = contentList();
+        List<Node> list = contentList();
 
-        for (Iterator iter = list.iterator(); iter.hasNext();) {
-            Object object = iter.next();
+        for (Iterator<Node> iter = list.iterator(); iter.hasNext();) {
+            Node object = iter.next();
 
             if (object instanceof ProcessingInstruction) {
                 ProcessingInstruction pi = (ProcessingInstruction) object;
@@ -885,7 +880,7 @@ public abstract class AbstractElement extends AbstractBranch implements
         return this;
     }
 
-    public Element addProcessingInstruction(String target, Map data) {
+    public Element addProcessingInstruction(String target, Map<String,String> data) {
         ProcessingInstruction node = getDocumentFactory()
                 .createProcessingInstruction(target, data);
 
@@ -1048,18 +1043,18 @@ public abstract class AbstractElement extends AbstractBranch implements
     // Helper methods
     // -------------------------------------------------------------------------
     public boolean hasMixedContent() {
-        List content = contentList();
+        List<Node> content = contentList();
 
         if ((content == null) || content.isEmpty() || (content.size() < 2)) {
             return false;
         }
 
-        Class prevClass = null;
+        Class<?> prevClass = null;
 
-        for (Iterator iter = content.iterator(); iter.hasNext();) {
-            Object object = iter.next();
+        for (Iterator<Node> iter = content.iterator(); iter.hasNext();) {
+            Node object = iter.next();
 
-            Class newClass = object.getClass();
+            Class<?> newClass = object.getClass();
 
             if (newClass != prevClass) {
                 if (prevClass != null) {
@@ -1074,17 +1069,17 @@ public abstract class AbstractElement extends AbstractBranch implements
     }
 
     public boolean isTextOnly() {
-        List content = contentList();
+        List<Node> content = contentList();
 
         if ((content == null) || content.isEmpty()) {
             return true;
         }
 
-        for (Iterator iter = content.iterator(); iter.hasNext();) {
-            Object object = iter.next();
+        for (Iterator<Node> iter = content.iterator(); iter.hasNext();) {
+            Node object = iter.next();
 
             if (!(object instanceof CharacterData)
-                    && !(object instanceof String)) {
+                    /*&& !(object instanceof String)*/) {
                 return false;
             }
         }
@@ -1094,13 +1089,13 @@ public abstract class AbstractElement extends AbstractBranch implements
 
     public void setText(String text) {
         /* remove all text nodes */
-        List allContent = contentList();
+        List<Node> allContent = contentList();
 
         if (allContent != null) {
-            Iterator it = allContent.iterator();
+            Iterator<Node> it = allContent.iterator();
 
             while (it.hasNext()) {
-                Node node = (Node) it.next();
+                Node node = it.next();
 
                 switch (node.getNodeType()) {
                     case CDATA_SECTION_NODE:
@@ -1120,7 +1115,7 @@ public abstract class AbstractElement extends AbstractBranch implements
     }
 
     public String getStringValue() {
-        List list = contentList();
+        List<Node> list = contentList();
 
         int size = list.size();
 
@@ -1172,14 +1167,14 @@ public abstract class AbstractElement extends AbstractBranch implements
      * @since DOM Level 2
      */
     public void normalize() {
-        List content = contentList();
+        List<Node> content = contentList();
 
         Text previousText = null;
 
         int i = 0;
 
         while (i < content.size()) {
-            Node node = (Node) content.get(i);
+            Node node = content.get(i);
 
             if (node instanceof Text) {
                 Text text = (Text) node;
@@ -1328,7 +1323,7 @@ public abstract class AbstractElement extends AbstractBranch implements
         } else if (prefix.equals("xml")) {
             return Namespace.XML_NAMESPACE;
         } else {
-            List list = contentList();
+            List<Node> list = contentList();
 
             int size = list.size();
 
@@ -1368,7 +1363,7 @@ public abstract class AbstractElement extends AbstractBranch implements
         } else if (uri.equals(getNamespaceURI())) {
             return getNamespace();
         } else {
-            List list = contentList();
+            List<Node> list = contentList();
 
             int size = list.size();
 
@@ -1388,15 +1383,15 @@ public abstract class AbstractElement extends AbstractBranch implements
         }
     }
 
-    public List getNamespacesForURI(String uri) {
-        BackedList answer = createResultList();
+    public List<Namespace> getNamespacesForURI(String uri) {
+        BackedList<Namespace> answer = createResultList();
 
         // if (getNamespaceURI().equals(uri)) {
         //
         // answer.addLocal(getNamespace());
         //
         // }
-        List list = contentList();
+        List<Node> list = contentList();
 
         int size = list.size();
 
@@ -1405,15 +1400,15 @@ public abstract class AbstractElement extends AbstractBranch implements
 
             if ((object instanceof Namespace)
                     && ((Namespace) object).getURI().equals(uri)) {
-                answer.addLocal(object);
+                answer.addLocal((Namespace) object);
             }
         }
 
         return answer;
     }
 
-    public List declaredNamespaces() {
-        BackedList answer = createResultList();
+    public List<Namespace> declaredNamespaces() {
+        BackedList<Namespace> answer = createResultList();
 
         // if (getNamespaceURI().length() > 0) {
         //
@@ -1421,7 +1416,7 @@ public abstract class AbstractElement extends AbstractBranch implements
         //
         // }
         //
-        List list = contentList();
+        List<Node> list = contentList();
 
         int size = list.size();
 
@@ -1429,19 +1424,19 @@ public abstract class AbstractElement extends AbstractBranch implements
             Object object = list.get(i);
 
             if (object instanceof Namespace) {
-                answer.addLocal(object);
+                answer.addLocal((Namespace)object);
             }
         }
 
         return answer;
     }
 
-    public List additionalNamespaces() {
-        List list = contentList();
+    public List<Namespace> additionalNamespaces() {
+        List<Node> list = contentList();
 
         int size = list.size();
 
-        BackedList answer = createResultList();
+        BackedList<Namespace> answer = createResultList();
 
         for (int i = 0; i < size; i++) {
             Object object = list.get(i);
@@ -1458,15 +1453,15 @@ public abstract class AbstractElement extends AbstractBranch implements
         return answer;
     }
 
-    public List additionalNamespaces(String defaultNamespaceURI) {
-        List list = contentList();
+    public List<Namespace> additionalNamespaces(String defaultNamespaceURI) {
+        List<Node> list = contentList();
 
-        BackedList answer = createResultList();
+        BackedList<Namespace> answer = createResultList();
 
         int size = list.size();
 
         for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
+            Node object = list.get(i);
 
             if (object instanceof Namespace) {
                 Namespace namespace = (Namespace) object;
@@ -1491,10 +1486,10 @@ public abstract class AbstractElement extends AbstractBranch implements
      */
     public void ensureAttributesCapacity(int minCapacity) {
         if (minCapacity > 1) {
-            List list = attributeList();
+            List<Attribute> list = attributeList();
 
             if (list instanceof ArrayList) {
-                ArrayList arrayList = (ArrayList) list;
+                ArrayList<Attribute> arrayList = (ArrayList<Attribute>) list;
 
                 arrayList.ensureCapacity(minCapacity);
             }
@@ -1589,7 +1584,7 @@ public abstract class AbstractElement extends AbstractBranch implements
      * @return the internal List used to store attributes or creates one if one
      *         is not available
      */
-    protected abstract List attributeList();
+    protected abstract List<Attribute> attributeList();
 
     /**
      * DOCUMENT ME!
@@ -1600,7 +1595,7 @@ public abstract class AbstractElement extends AbstractBranch implements
      * @return the internal List used to store attributes or creates one with
      *         the specified size if one is not available
      */
-    protected abstract List attributeList(int attributeCount);
+    protected abstract List<Attribute> attributeList(int attributeCount);
 
     protected DocumentFactory getDocumentFactory() {
         QName qName = getQName();
@@ -1623,7 +1618,7 @@ public abstract class AbstractElement extends AbstractBranch implements
      * 
      * @return DOCUMENT ME!
      */
-    protected List createAttributeList() {
+    protected List<Attribute> createAttributeList() {
         return createAttributeList(DEFAULT_CONTENT_LIST_SIZE);
     }
 
@@ -1636,12 +1631,12 @@ public abstract class AbstractElement extends AbstractBranch implements
      * 
      * @return DOCUMENT ME!
      */
-    protected List createAttributeList(int size) {
-        return new ArrayList(size);
+    protected <T> List<T> createAttributeList(int size) {
+        return new ArrayList<T>(size);
     }
 
-    protected Iterator createSingleIterator(Object result) {
-        return new SingleIterator(result);
+    protected <T> Iterator<T> createSingleIterator(T result) {
+        return new SingleIterator<T>(result);
     }
 }
 

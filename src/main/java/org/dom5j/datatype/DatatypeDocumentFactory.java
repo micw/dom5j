@@ -138,7 +138,7 @@ public class DatatypeDocumentFactory extends DocumentFactory {
             InputSource inputSource = resolver.resolveEntity(null,
                     schemaInstanceURI);
 
-            if (resolver == null) {
+            if (inputSource == null) {
                 throw new InvalidSchemaException("Could not resolve the URI: "
                         + schemaInstanceURI);
             }
@@ -167,7 +167,7 @@ public class DatatypeDocumentFactory extends DocumentFactory {
             InputSource inputSource = resolver.resolveEntity(null,
                     schemaInstanceURI);
 
-            if (resolver == null) {
+            if (inputSource == null) {
                 throw new InvalidSchemaException("Could not resolve the URI: "
                         + schemaInstanceURI);
             }

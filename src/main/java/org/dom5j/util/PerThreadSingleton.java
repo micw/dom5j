@@ -24,23 +24,23 @@ import java.lang.ref.WeakReference;
 public class PerThreadSingleton implements SingletonStrategy {
     private String singletonClassName = null;
 
-    private ThreadLocal perThreadCache = new ThreadLocal();
+    private ThreadLocal<WeakReference<?>> perThreadCache = new ThreadLocal<WeakReference<?>>();
 
     public PerThreadSingleton() {
     }
 
     public void reset() {
-        perThreadCache = new ThreadLocal();
+        perThreadCache = new ThreadLocal<WeakReference<?>>();
     }
 
     public Object instance() {
         Object singletonInstancePerThread = null;
         // use weak reference to prevent cyclic reference during GC
-        WeakReference ref = (WeakReference) perThreadCache.get();
+        WeakReference<?> ref = perThreadCache.get();
         // singletonInstancePerThread=perThreadCache.get();
         // if (singletonInstancePerThread==null) {
         if (ref == null || ref.get() == null) {
-            Class clazz = null;
+            Class<?> clazz = null;
             try {
                 clazz = Thread.currentThread().getContextClassLoader().loadClass(
                         singletonClassName);
@@ -52,7 +52,7 @@ public class PerThreadSingleton implements SingletonStrategy {
                 } catch (Exception ignore2) {
                 }
             }
-            perThreadCache.set(new WeakReference(singletonInstancePerThread));
+            perThreadCache.set(new WeakReference<Object>(singletonInstancePerThread));
         } else {
             singletonInstancePerThread = ref.get();
         }

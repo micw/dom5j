@@ -21,7 +21,7 @@ import org.dom5j.QName;
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.9 $
  */
-public class BeanAttributeList extends AbstractList {
+public class BeanAttributeList extends AbstractList<BeanAttribute> {
     /** The BeanElement that this */
     private BeanElement parent;
 
@@ -41,7 +41,7 @@ public class BeanAttributeList extends AbstractList {
         this.parent = parent;
 
         Object data = parent.getData();
-        Class beanClass = (data != null) ? data.getClass() : null;
+        Class<?> beanClass = (data != null) ? data.getClass() : null;
         this.beanMetaData = BeanMetaData.get(beanClass);
         this.attributes = new BeanAttribute[beanMetaData.attributeCount()];
     }
@@ -95,7 +95,7 @@ public class BeanAttributeList extends AbstractList {
         return attributes.length;
     }
 
-    public Object get(int index) {
+    public BeanAttribute get(int index) {
         BeanAttribute attribute = attributes[index];
 
         if (attribute == null) {
@@ -106,15 +106,15 @@ public class BeanAttributeList extends AbstractList {
         return attribute;
     }
 
-    public boolean add(Object object) {
+    public boolean add(BeanAttribute object) {
         throw new UnsupportedOperationException("add(Object) unsupported");
     }
 
-    public void add(int index, Object object) {
+    public void add(int index, BeanAttribute object) {
         throw new UnsupportedOperationException("add(int,Object) unsupported");
     }
 
-    public Object set(int index, Object object) {
+    public BeanAttribute set(int index, BeanAttribute object) {
         throw new UnsupportedOperationException("set(int,Object) unsupported");
     }
 
@@ -122,12 +122,12 @@ public class BeanAttributeList extends AbstractList {
         return false;
     }
 
-    public Object remove(int index) {
+    public BeanAttribute remove(int index) {
         BeanAttribute attribute = (BeanAttribute) get(index);
-        Object oldValue = attribute.getValue();
+//        String oldValue = attribute.getValue();
         attribute.setValue(null);
 
-        return oldValue;
+        return null;
     }
 
     public void clear() {

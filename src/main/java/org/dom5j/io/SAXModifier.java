@@ -110,7 +110,7 @@ public class SAXModifier {
      * @return the newly created Document instance
      * 
      * @throws DocumentException
-     *             DocumentException org.dom4j.DocumentException} if an error
+     *             DocumentException org.dom5j.DocumentException} if an error
      *             occurs during parsing.
      */
     public Document modify(File source) throws DocumentException {
@@ -133,7 +133,7 @@ public class SAXModifier {
      * @return the newly created Document instance
      * 
      * @throws DocumentException
-     *             DocumentException org.dom4j.DocumentException} if an error
+     *             DocumentException org.dom5j.DocumentException} if an error
      *             occurs during parsing.
      */
     public Document modify(InputSource source) throws DocumentException {
@@ -156,7 +156,7 @@ public class SAXModifier {
      * @return the newly created Document instance
      * 
      * @throws DocumentException
-     *             DocumentException org.dom4j.DocumentException} if an error
+     *             DocumentException org.dom5j.DocumentException} if an error
      *             occurs during parsing.
      */
     public Document modify(InputStream source) throws DocumentException {
@@ -181,7 +181,7 @@ public class SAXModifier {
      * @return the newly created Document instance
      * 
      * @throws DocumentException
-     *             DocumentException org.dom4j.DocumentException} if an error
+     *             DocumentException org.dom5j.DocumentException} if an error
      *             occurs during parsing.
      */
     public Document modify(InputStream source, String systemId)
@@ -205,7 +205,7 @@ public class SAXModifier {
      * @return the newly created Document instance
      * 
      * @throws DocumentException
-     *             DocumentException org.dom4j.DocumentException} if an error
+     *             DocumentException org.dom5j.DocumentException} if an error
      *             occurs during parsing.
      */
     public Document modify(Reader source) throws DocumentException {
@@ -230,7 +230,7 @@ public class SAXModifier {
      * @return the newly created Document instance
      * 
      * @throws DocumentException
-     *             DocumentException org.dom4j.DocumentException} if an error
+     *             DocumentException org.dom5j.DocumentException} if an error
      *             occurs during parsing.
      */
     public Document modify(Reader source, String systemId)
@@ -254,7 +254,7 @@ public class SAXModifier {
      * @return the newly created Document instance
      * 
      * @throws DocumentException
-     *             DocumentException org.dom4j.DocumentException} if an error
+     *             DocumentException org.dom5j.DocumentException} if an error
      *             occurs during parsing.
      */
     public Document modify(URL source) throws DocumentException {
@@ -277,7 +277,7 @@ public class SAXModifier {
      * @return the newly created Document instance
      * 
      * @throws DocumentException
-     *             DocumentException org.dom4j.DocumentException} if an error
+     *             DocumentException org.dom5j.DocumentException} if an error
      *             occurs during parsing.
      */
     public Document modify(String source) throws DocumentException {

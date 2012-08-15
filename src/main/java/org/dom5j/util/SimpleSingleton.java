@@ -33,7 +33,7 @@ public class SimpleSingleton implements SingletonStrategy {
 
     public void reset() {
         if (singletonClassName != null) {
-            Class clazz = null;
+            Class<?> clazz = null;
             try {
                 clazz = Thread.currentThread().getContextClassLoader().loadClass(
                         singletonClassName);

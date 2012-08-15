@@ -63,7 +63,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * <p>
  * If you are trying to use JAXP to explicitly set your SAX parser and are
  * experiencing problems, you can turn on verbose error reporting by defining
- * the system property <code>org.dom4j.verbose</code> to be "true" which will
+ * the system property <code>org.dom5j.verbose</code> to be "true" which will
  * output a more detailed description of why JAXP could not find a SAX parser
  * </p>
  * 

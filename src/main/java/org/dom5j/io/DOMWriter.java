@@ -41,7 +41,7 @@ public class DOMWriter {
             "com.sun.xml.tree.XmlDocument", // Sun's Project X
             "oracle.xml.parser.v2.XMLDocument", // Oracle V2
             "oracle.xml.parser.XMLDocument", // Oracle V1
-            "org.dom4j.dom.DOMDocument" // Internal DOM implementation
+            "org.dom5j.dom.DOMDocument" // Internal DOM implementation
     };
 
     // the Class used to create new DOM Document instances

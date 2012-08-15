@@ -74,7 +74,7 @@ public class SchemaParser {
      * Cache of <code>XSDatatype</code> instances loaded or created during
      * this build
      */
-    private Map dataTypeCache = new HashMap();
+    private Map<String,XSDatatype> dataTypeCache = new HashMap<String,XSDatatype>();
 
     /** NamedTypeResolver */
     private NamedTypeResolver namedTypeResolver;
@@ -112,7 +112,7 @@ public class SchemaParser {
 
         if (root != null) {
             // handle schema includes
-            Iterator includeIter = root.elementIterator(XSD_INCLUDE);
+            Iterator<Element> includeIter = root.elementIterator(XSD_INCLUDE);
 
             while (includeIter.hasNext()) {
                 Element includeElement = (Element) includeIter.next();
@@ -149,7 +149,7 @@ public class SchemaParser {
             }
 
             // handle elements
-            Iterator iter = root.elementIterator(XSD_ELEMENT);
+            Iterator<Element> iter = root.elementIterator(XSD_ELEMENT);
 
             while (iter.hasNext()) {
                 onDatatypeElement((Element) iter.next(), documentFactory);
@@ -224,7 +224,7 @@ public class SchemaParser {
             onSchemaComplexType(schemaComplexType, factory);
         }
 
-        Iterator iter = xsdElement.elementIterator(XSD_ATTRIBUTE);
+        Iterator<Element> iter = xsdElement.elementIterator(XSD_ATTRIBUTE);
 
         if (iter.hasNext()) {
             do {
@@ -266,7 +266,7 @@ public class SchemaParser {
      */
     private void onSchemaComplexType(Element schemaComplexType,
             DatatypeElementFactory elementFactory) {
-        Iterator iter = schemaComplexType.elementIterator(XSD_ATTRIBUTE);
+        Iterator<Element> iter = schemaComplexType.elementIterator(XSD_ATTRIBUTE);
 
         while (iter.hasNext()) {
             Element xsdAttribute = (Element) iter.next();
@@ -306,7 +306,7 @@ public class SchemaParser {
     }
 
     private void onChildElements(Element element, DatatypeElementFactory fact) {
-        Iterator iter = element.elementIterator(XSD_ELEMENT);
+        Iterator<Element> iter = element.elementIterator(XSD_ELEMENT);
 
         while (iter.hasNext()) {
             Element xsdElement = (Element) iter.next();
@@ -457,7 +457,7 @@ public class SchemaParser {
         ValidationContext context = null;
 
         try {
-            for (Iterator iter = xsdRestriction.elementIterator(); iter
+            for (Iterator<Element> iter = xsdRestriction.elementIterator(); iter
                     .hasNext();) {
                 Element element = (Element) iter.next();
                 String name = element.getName();

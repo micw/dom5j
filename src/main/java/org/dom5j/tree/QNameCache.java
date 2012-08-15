@@ -10,7 +10,6 @@ package org.dom5j.tree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -33,15 +32,15 @@ import org.dom5j.QName;
  */
 public class QNameCache {
     /** Cache of {@link QName}instances with no namespace */
-    protected Map noNamespaceCache = Collections
-            .synchronizedMap(new WeakHashMap());
+    protected Map<String,QName> noNamespaceCache = Collections
+            .synchronizedMap(new WeakHashMap<String,QName>());
 
     /**
      * Cache of {@link Map}instances indexed by namespace which contain caches
      * of {@link QName}for each name
      */
-    protected Map namespaceCache = Collections
-            .synchronizedMap(new WeakHashMap());
+    protected Map<Namespace,Map<String,QName>> namespaceCache = Collections
+            .synchronizedMap(new WeakHashMap<Namespace,Map<String,QName>>());
 
     /**
      * The document factory associated with new QNames instances in this cache
@@ -61,12 +60,11 @@ public class QNameCache {
      * 
      * @return DOCUMENT ME!
      */
-    public List getQNames() {
-        List answer = new ArrayList();
+    public List<QName> getQNames() {
+        List<QName> answer = new ArrayList<QName>();
         answer.addAll(noNamespaceCache.values());
 
-        for (Iterator it = namespaceCache.values().iterator(); it.hasNext();) {
-            Map map = (Map) it.next();
+        for (Map<String,QName> map: namespaceCache.values()) {
             answer.addAll(map.values());
         }
 
@@ -110,7 +108,7 @@ public class QNameCache {
      * @return the QName for the given local name and namepsace
      */
     public QName get(String name, Namespace namespace) {
-        Map cache = getNamespaceCache(namespace);
+        Map<String,QName> cache = getNamespaceCache(namespace);
         QName answer = null;
 
         if (name != null) {
@@ -141,7 +139,7 @@ public class QNameCache {
      * @return the QName for the given local name, qualified name and namepsace
      */
     public QName get(String localName, Namespace namespace, String qName) {
-        Map cache = getNamespaceCache(namespace);
+        Map<String,QName> cache = getNamespaceCache(namespace);
         QName answer = null;
 
         if (localName != null) {
@@ -195,15 +193,15 @@ public class QNameCache {
      * @return the cache for the given namespace. If one does not currently
      *         exist it is created.
      */
-    protected Map getNamespaceCache(Namespace namespace) {
+    protected Map<String,QName> getNamespaceCache(Namespace namespace) {
         if (namespace == Namespace.NO_NAMESPACE) {
             return noNamespaceCache;
         }
 
-        Map answer = null;
+        Map<String,QName> answer = null;
 
         if (namespace != null) {
-            answer = (Map) namespaceCache.get(namespace);
+            answer = namespaceCache.get(namespace);
         }
 
         if (answer == null) {
@@ -219,8 +217,8 @@ public class QNameCache {
      * 
      * @return a newly created {@link Map}instance.
      */
-    protected Map createMap() {
-        return Collections.synchronizedMap(new HashMap());
+    protected <K,V> Map<K,V> createMap() {
+        return Collections.synchronizedMap(new HashMap<K,V>());
     }
 
     /**

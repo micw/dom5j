@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.dom5j.IllegalAddException;
 import org.dom5j.Node;
 
 /**
@@ -28,65 +27,66 @@ import org.dom5j.Node;
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.11 $
  */
-public class ContentListFacade extends AbstractList {
+public class ContentListFacade<TNode extends Node> extends AbstractList<TNode> {
     /** The content of the Branch which is modified if I am modified */
-    private List branchContent;
+    private List<TNode> branchContent;
 
     /** The <code>AbstractBranch</code> instance which owns the content */
     private AbstractBranch branch;
 
-    public ContentListFacade(AbstractBranch branch, List branchContent) {
+    public ContentListFacade(AbstractBranch branch, List<TNode> branchContent) {
         this.branch = branch;
         this.branchContent = branchContent;
     }
 
-    public boolean add(Object object) {
-        branch.childAdded(asNode(object));
+    public boolean add(TNode object) {
+        branch.childAdded(object);
 
         return branchContent.add(object);
     }
 
-    public void add(int index, Object object) {
-        branch.childAdded(asNode(object));
+    public void add(int index, TNode object) {
+        branch.childAdded(object);
         branchContent.add(index, object);
     }
 
-    public Object set(int index, Object object) {
-        branch.childAdded(asNode(object));
+    public TNode set(int index, TNode object) {
+        branch.childAdded(object);
 
-        return branchContent.set(index, object);
+        return (TNode) branchContent.set(index, object);
     }
 
-    public boolean remove(Object object) {
-        branch.childRemoved(asNode(object));
+    public boolean remove(TNode object) {
+        branch.childRemoved(object);
 
         return branchContent.remove(object);
     }
 
-    public Object remove(int index) {
-        Object object = branchContent.remove(index);
+    @SuppressWarnings("unchecked")
+    public TNode remove(int index) {
+        Node object = branchContent.remove(index);
 
         if (object != null) {
-            branch.childRemoved(asNode(object));
+            branch.childRemoved(object);
         }
 
-        return object;
+        return (TNode) object;
     }
 
-    public boolean addAll(Collection collection) {
+    public boolean addAll(Collection<? extends TNode> collection) {
         int count = branchContent.size();
 
-        for (Iterator iter = collection.iterator(); iter.hasNext(); count++) {
+        for (Iterator<? extends TNode> iter = collection.iterator(); iter.hasNext(); count++) {
             add(iter.next());
         }
 
         return count == branchContent.size();
     }
 
-    public boolean addAll(int index, Collection collection) {
+    public boolean addAll(int index, Collection<? extends TNode> collection) {
         int count = branchContent.size();
 
-        for (Iterator iter = collection.iterator(); iter.hasNext(); count--) {
+        for (Iterator<? extends TNode> iter = collection.iterator(); iter.hasNext(); count--) {
             add(index++, iter.next());
         }
 
@@ -94,18 +94,18 @@ public class ContentListFacade extends AbstractList {
     }
 
     public void clear() {
-        for (Iterator iter = iterator(); iter.hasNext();) {
-            Object object = iter.next();
-            branch.childRemoved(asNode(object));
+        for (Iterator<TNode> iter = iterator(); iter.hasNext();) {
+            Node object = iter.next();
+            branch.childRemoved(object);
         }
 
         branchContent.clear();
     }
 
-    public boolean removeAll(Collection c) {
-        for (Iterator iter = c.iterator(); iter.hasNext();) {
-            Object object = iter.next();
-            branch.childRemoved(asNode(object));
+    public boolean removeAll(Collection<?> c) {
+        for (Iterator<?> iter = c.iterator(); iter.hasNext();) {
+            Object object = (Object) iter.next();
+            if (object instanceof Node) branch.childRemoved((Node)object);
         }
 
         return branchContent.removeAll(c);
@@ -127,16 +127,16 @@ public class ContentListFacade extends AbstractList {
         return branchContent.toArray();
     }
 
-    public Object[] toArray(Object[] a) {
+    public Node[] toArray(Node[] a) {
         return branchContent.toArray(a);
     }
 
-    public boolean containsAll(Collection c) {
+    public boolean containsAll(Collection<?> c) {
         return branchContent.containsAll(c);
     }
-
-    public Object get(int index) {
-        return branchContent.get(index);
+    
+    public TNode get(int index) {
+        return (TNode) branchContent.get(index);
     }
 
     public int indexOf(Object o) {
@@ -147,17 +147,7 @@ public class ContentListFacade extends AbstractList {
         return branchContent.lastIndexOf(o);
     }
 
-    protected Node asNode(Object object) {
-        if (object instanceof Node) {
-            return (Node) object;
-        } else {
-            throw new IllegalAddException(
-                    "This list must contain instances of "
-                            + "Node. Invalid type: " + object);
-        }
-    }
-
-    protected List getBackingList() {
+    protected List<TNode> getBackingList() {
         return branchContent;
     }
 }

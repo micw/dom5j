@@ -9,6 +9,8 @@ package org.dom5j;
 
 import java.util.List;
 
+import org.dom5j.dtd.DTDDeclaration;
+
 /**
  * <p>
  * <code>DocumentType</code> defines an XML DOCTYPE declaration.
@@ -49,7 +51,7 @@ public interface DocumentType extends Node {
      * 
      * @return DOCUMENT ME!
      */
-    List getInternalDeclarations();
+    List<DTDDeclaration> getInternalDeclarations();
 
     /**
      * Sets the list of internal DTD declaration objects, defined in the
@@ -58,7 +60,7 @@ public interface DocumentType extends Node {
      * @param declarations
      *            DOCUMENT ME!
      */
-    void setInternalDeclarations(List declarations);
+    void setInternalDeclarations(List<DTDDeclaration> declarations);
 
     /**
      * Returns a list of internal DTD declaration objects, defined in the
@@ -66,7 +68,7 @@ public interface DocumentType extends Node {
      * 
      * @return DOCUMENT ME!
      */
-    List getExternalDeclarations();
+    List<DTDDeclaration> getExternalDeclarations();
 
     /**
      * Sets the list of internal DTD declaration objects, defined in the
@@ -75,7 +77,7 @@ public interface DocumentType extends Node {
      * @param declarations
      *            DOCUMENT ME!
      */
-    void setExternalDeclarations(List declarations);
+    void setExternalDeclarations(List<DTDDeclaration> declarations);
 }
 
 /*

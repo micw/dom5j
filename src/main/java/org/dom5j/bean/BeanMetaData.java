@@ -31,13 +31,14 @@ public class BeanMetaData {
     protected static final Object[] NULL_ARGS = {};
 
     /** Singleton cache */
-    private static Map singletonCache = new HashMap();
+    private static Map<Class<?>,BeanMetaData> singletonCache = new HashMap<Class<?>, BeanMetaData>();
 
     private static final DocumentFactory DOCUMENT_FACTORY = BeanDocumentFactory
             .getInstance();
 
     /** The class of the bean */
-    private Class beanClass;
+    @SuppressWarnings("unused")
+    private Class<?> beanClass;
 
     /** Property descriptors for the bean */
     private PropertyDescriptor[] propertyDescriptors;
@@ -52,9 +53,9 @@ public class BeanMetaData {
     private Method[] writeMethods;
 
     /** Index of names and QNames to indices */
-    private Map nameMap = new HashMap();
+    private Map<Object,Integer> nameMap = new HashMap<Object,Integer>();
 
-    public BeanMetaData(Class beanClass) {
+    public BeanMetaData(Class<?> beanClass) {
         this.beanClass = beanClass;
 
         if (beanClass != null) {
@@ -97,7 +98,7 @@ public class BeanMetaData {
      * 
      * @return DOCUMENT ME!
      */
-    public static BeanMetaData get(Class beanClass) {
+    public static BeanMetaData get(Class<?> beanClass) {
         BeanMetaData answer = (BeanMetaData) singletonCache.get(beanClass);
 
         if (answer == null) {

@@ -27,7 +27,7 @@ import org.xml.sax.InputSource;
 /**
  * Reads an XML document and creates a DOM4J tree from SAX parsing events.
  * {@link JAXBObjectHandler}objects can be registered to automatically receive
- * unmarshalled XML fragments. Registered {@linkorg.dom4j.ElementHandler}
+ * unmarshalled XML fragments. Registered {@linkorg.dom5j.ElementHandler}
  * implementations are notified when a certain element path is encountered
  * 
  * @author Wonne Keysers (Realsoftware.be)

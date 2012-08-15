@@ -143,7 +143,7 @@ class SAXHelper {
 
     protected static boolean isVerboseErrorReporting() {
         try {
-            String flag = System.getProperty("org.dom4j.verbose");
+            String flag = System.getProperty("org.dom5j.verbose");
 
             if ((flag != null) && flag.equalsIgnoreCase("true")) {
                 return true;

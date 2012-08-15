@@ -30,12 +30,13 @@ import org.dom5j.tree.DefaultElement;
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.10 $
  */
+@SuppressWarnings("rawtypes")
 public class IndexedElement extends DefaultElement {
     /** Lazily constructed index for elements */
     private Map elementIndex;
 
     /** Lazily constructed index for attributes */
-    private Map attributeIndex;
+    private Map<Object,Attribute> attributeIndex;
 
     public IndexedElement(String name) {
         super(name);
@@ -65,11 +66,11 @@ public class IndexedElement extends DefaultElement {
         return asElement(elementIndex().get(qName));
     }
 
-    public List elements(String name) {
+    public List<Element> elements(String name) {
         return asElementList(elementIndex().get(name));
     }
 
-    public List elements(QName qName) {
+    public List<Element> elements(QName qName) {
         return asElementList(elementIndex().get(qName));
     }
 
@@ -89,12 +90,13 @@ public class IndexedElement extends DefaultElement {
         return null;
     }
 
-    protected List asElementList(Object object) {
+    @SuppressWarnings("unchecked")
+    protected List<Element> asElementList(Object object) {
         if (object instanceof Element) {
-            return createSingleResultList(object);
+            return createSingleResultList((Element)object);
         } else if (object != null) {
-            List list = (List) object;
-            BackedList answer = createResultList();
+            List<Element> list = (List<Element>) object;
+            BackedList<Element> answer = createResultList();
 
             for (int i = 0, size = list.size(); i < size; i++) {
                 answer.addLocal(list.get(i));
@@ -174,8 +176,8 @@ public class IndexedElement extends DefaultElement {
      * 
      * @return DOCUMENT ME!
      */
-    protected Map createAttributeIndex() {
-        Map answer = createIndex();
+    protected Map<Object,Attribute> createAttributeIndex() {
+        Map<Object,Attribute> answer = createIndex();
 
         return answer;
     }
@@ -198,6 +200,7 @@ public class IndexedElement extends DefaultElement {
         addToElementIndex(name, element);
     }
 
+    @SuppressWarnings("unchecked")
     protected void addToElementIndex(Object key, Element value) {
         Object oldValue = elementIndex.get(key);
 
@@ -269,8 +272,8 @@ public class IndexedElement extends DefaultElement {
      * 
      * @return DOCUMENT ME!
      */
-    protected Map createIndex() {
-        return new HashMap();
+    protected <K,V> Map<K,V> createIndex() {
+        return new HashMap<K,V>();
     }
 
     /**

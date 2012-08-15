@@ -9,9 +9,7 @@ package org.dom5j.io;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.dom5j.Branch;
 import org.dom5j.Document;
@@ -22,6 +20,7 @@ import org.dom5j.ElementHandler;
 import org.dom5j.Namespace;
 import org.dom5j.QName;
 import org.dom5j.dtd.AttributeDecl;
+import org.dom5j.dtd.DTDDeclaration;
 import org.dom5j.dtd.ElementDecl;
 import org.dom5j.dtd.ExternalEntityDecl;
 import org.dom5j.dtd.InternalEntityDecl;
@@ -81,17 +80,11 @@ public class SAXContentHandler extends DefaultHandler implements
      */
     private StringBuffer cdataText;
 
-    /** namespaces that are available for use */
-    private Map availableNamespaceMap = new HashMap();
-
-    /** declared namespaces that are not yet available for use */
-    private List declaredNamespaceList = new ArrayList();
-
     /** internal DTD declarations */
-    private List internalDTDDeclarations;
+    private List<DTDDeclaration> internalDTDDeclarations;
 
     /** external DTD declarations */
-    private List externalDTDDeclarations;
+    private List<DTDDeclaration> externalDTDDeclarations;
 
     /** The number of namespaces that are declared in the current scope */
     private int declaredNamespaceIndex;
@@ -850,7 +843,7 @@ public class SAXContentHandler extends DefaultHandler implements
                     new Class[] {});
 
             if (m != null) {
-                return (String) m.invoke(locator, null);
+                return (String) m.invoke(locator, (Object[]) null);
             }
         } catch (Exception e) {
             // do nothing
@@ -882,7 +875,8 @@ public class SAXContentHandler extends DefaultHandler implements
      *            DOCUMENT ME!
      */
     protected void addDeclaredNamespaces(Element element) {
-        Namespace elementNamespace = element.getNamespace();
+        // TODO: why is elementNamespace not used here (or in original dom4j 1.6.1)?
+//        Namespace elementNamespace = element.getNamespace();
 
         for (int size = namespaceStack.size(); declaredNamespaceIndex < size; 
                 declaredNamespaceIndex++) {
@@ -940,9 +934,9 @@ public class SAXContentHandler extends DefaultHandler implements
      * @param declaration
      *            DOCUMENT ME!
      */
-    protected void addDTDDeclaration(Object declaration) {
+    protected void addDTDDeclaration(DTDDeclaration declaration) {
         if (internalDTDDeclarations == null) {
-            internalDTDDeclarations = new ArrayList();
+            internalDTDDeclarations = new ArrayList<DTDDeclaration>();
         }
 
         internalDTDDeclarations.add(declaration);
@@ -954,9 +948,9 @@ public class SAXContentHandler extends DefaultHandler implements
      * @param declaration
      *            DOCUMENT ME!
      */
-    protected void addExternalDTDDeclaration(Object declaration) {
+    protected void addExternalDTDDeclaration(DTDDeclaration declaration) {
         if (externalDTDDeclarations == null) {
-            externalDTDDeclarations = new ArrayList();
+            externalDTDDeclarations = new ArrayList<DTDDeclaration>();
         }
 
         externalDTDDeclarations.add(declaration);
