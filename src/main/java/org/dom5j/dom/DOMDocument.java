@@ -198,14 +198,14 @@ public class DOMDocument extends DefaultDocument implements Document {
     // org.w3c.dom.Document interface
     // -------------------------------------------------------------------------
     public NodeList getElementsByTagName(String name) {
-        ArrayList list = new ArrayList();
+        ArrayList<org.dom5j.Node> list = new ArrayList<org.dom5j.Node>();
         DOMNodeHelper.appendElementsByTagName(list, this, name);
 
         return DOMNodeHelper.createNodeList(list);
     }
 
     public NodeList getElementsByTagNameNS(String namespace, String name) {
-        ArrayList list = new ArrayList();
+        ArrayList<org.dom5j.Node> list = new ArrayList<org.dom5j.Node>();
         DOMNodeHelper.appendElementsByTagNameNS(list, this, namespace, name);
 
         return DOMNodeHelper.createNodeList(list);

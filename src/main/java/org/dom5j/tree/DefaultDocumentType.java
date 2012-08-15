@@ -9,6 +9,8 @@ package org.dom5j.tree;
 
 import java.util.List;
 
+import org.dom5j.dtd.DTDDeclaration;
+
 /**
  * <p>
  * <code>DefaultDocumentType</code> is the DOM4J default implementation of an
@@ -29,10 +31,10 @@ public class DefaultDocumentType extends AbstractDocumentType {
     private String systemID;
 
     /** The internal DTD declarations */
-    private List internalDeclarations;
+    private List<DTDDeclaration> internalDeclarations;
 
     /** The external DTD declarations */
-    private List externalDeclarations;
+    private List<DTDDeclaration> externalDeclarations;
 
     public DefaultDocumentType() {
     }
@@ -119,19 +121,19 @@ public class DefaultDocumentType extends AbstractDocumentType {
         this.systemID = systemID;
     }
 
-    public List getInternalDeclarations() {
+    public List<DTDDeclaration> getInternalDeclarations() {
         return internalDeclarations;
     }
 
-    public void setInternalDeclarations(List internalDeclarations) {
+    public void setInternalDeclarations(List<DTDDeclaration> internalDeclarations) {
         this.internalDeclarations = internalDeclarations;
     }
 
-    public List getExternalDeclarations() {
+    public List<DTDDeclaration> getExternalDeclarations() {
         return externalDeclarations;
     }
 
-    public void setExternalDeclarations(List externalDeclarations) {
+    public void setExternalDeclarations(List<DTDDeclaration> externalDeclarations) {
         this.externalDeclarations = externalDeclarations;
     }
 }

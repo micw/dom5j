@@ -42,7 +42,7 @@ public class DOMDocumentFactory extends DocumentFactory implements
     static {
         try {
             String defaultSingletonClass = "org.dom5j.util.SimpleSingleton";
-            Class clazz = null;
+            Class<?> clazz = null;
             try {
                 String singletonClass = defaultSingletonClass;
                 singletonClass = System.getProperty(
@@ -129,7 +129,7 @@ public class DOMDocumentFactory extends DocumentFactory implements
     }
 
     public ProcessingInstruction createProcessingInstruction(String target,
-            Map data) {
+            Map<String,String> data) {
         return new DOMProcessingInstruction(target, data);
     }
 

@@ -36,7 +36,7 @@ public class DefaultProcessingInstruction extends
      * @param values
      *            is the <code>Map</code> values for the PI
      */
-    public DefaultProcessingInstruction(String target, Map values) {
+    public DefaultProcessingInstruction(String target, Map<String,String> values) {
         super(target, values);
     }
 
@@ -81,7 +81,7 @@ public class DefaultProcessingInstruction extends
         this.values = parseValues(text);
     }
 
-    public void setValues(Map values) {
+    public void setValues(Map<String,String> values) {
         this.values = values;
         this.text = toString(values);
     }

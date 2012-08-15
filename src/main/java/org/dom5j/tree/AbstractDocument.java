@@ -22,7 +22,6 @@ import org.dom5j.IllegalAddException;
 import org.dom5j.Node;
 import org.dom5j.ProcessingInstruction;
 import org.dom5j.QName;
-import org.dom5j.Text;
 import org.dom5j.Visitor;
 import org.dom5j.io.OutputFormat;
 import org.dom5j.io.XMLWriter;
@@ -115,20 +114,12 @@ public abstract class AbstractDocument extends AbstractBranch implements
         }
 
         // visit content
-        List content = content();
+        List<Node> content = content();
 
         if (content != null) {
-            for (Iterator iter = content.iterator(); iter.hasNext();) {
-                Object object = iter.next();
-
-                if (object instanceof String) {
-                    Text text = getDocumentFactory()
-                            .createText((String) object);
-                    visitor.visit(text);
-                } else {
-                    Node node = (Node) object;
-                    node.accept(visitor);
-                }
+            for (Iterator<Node> iter = content.iterator(); iter.hasNext();) {
+                Node node = iter.next();
+                node.accept(visitor);
             }
         }
     }
@@ -160,7 +151,7 @@ public abstract class AbstractDocument extends AbstractBranch implements
         return this;
     }
 
-    public Document addProcessingInstruction(String target, Map data) {
+    public Document addProcessingInstruction(String target, Map<String,String> data) {
         ProcessingInstruction node = getDocumentFactory()
                 .createProcessingInstruction(target, data);
         add(node);

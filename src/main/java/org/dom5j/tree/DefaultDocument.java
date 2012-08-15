@@ -7,7 +7,6 @@
 
 package org.dom5j.tree;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,9 +29,6 @@ import org.xml.sax.EntityResolver;
  * @version $Revision: 1.34 $
  */
 public class DefaultDocument extends AbstractDocument {
-    protected static final List EMPTY_LIST = Collections.EMPTY_LIST;
-
-    protected static final Iterator EMPTY_ITERATOR = EMPTY_LIST.iterator();
 
     /** The name of the document */
     private String name;
@@ -43,7 +39,7 @@ public class DefaultDocument extends AbstractDocument {
     /**
      * Store the contents of the document as a lazily created <code>List</code>
      */
-    private List content;
+    private List<Node> content;
 
     /** The document type for this document */
     private DocumentType docType;
@@ -130,25 +126,25 @@ public class DefaultDocument extends AbstractDocument {
         return document;
     }
 
-    public List processingInstructions() {
-        List source = contentList();
-        List answer = createResultList();
+    public List<ProcessingInstruction> processingInstructions() {
+        List<Node> source = contentList();
+        List<ProcessingInstruction> answer = createResultList();
         int size = source.size();
 
         for (int i = 0; i < size; i++) {
             Object object = source.get(i);
 
             if (object instanceof ProcessingInstruction) {
-                answer.add(object);
+                answer.add((ProcessingInstruction)object);
             }
         }
 
         return answer;
     }
 
-    public List processingInstructions(String target) {
-        List source = contentList();
-        List answer = createResultList();
+    public List<ProcessingInstruction> processingInstructions(String target) {
+        List<Node> source = contentList();
+        List<ProcessingInstruction> answer = createResultList();
         int size = source.size();
 
         for (int i = 0; i < size; i++) {
@@ -167,7 +163,7 @@ public class DefaultDocument extends AbstractDocument {
     }
 
     public ProcessingInstruction processingInstruction(String target) {
-        List source = contentList();
+        List<Node> source = contentList();
         int size = source.size();
 
         for (int i = 0; i < size; i++) {
@@ -186,9 +182,9 @@ public class DefaultDocument extends AbstractDocument {
     }
 
     public boolean removeProcessingInstruction(String target) {
-        List source = contentList();
+        List<Node> source = contentList();
 
-        for (Iterator iter = source.iterator(); iter.hasNext();) {
+        for (Iterator<Node> iter = source.iterator(); iter.hasNext();) {
             Object object = iter.next();
 
             if (object instanceof ProcessingInstruction) {
@@ -205,19 +201,19 @@ public class DefaultDocument extends AbstractDocument {
         return false;
     }
 
-    public void setContent(List content) {
+    public void setContent(List<Node> content) {
         rootElement = null;
         contentRemoved();
 
         if (content instanceof ContentListFacade) {
-            content = ((ContentListFacade) content).getBackingList();
+            content = ((ContentListFacade<Node>) content).getBackingList();
         }
 
         if (content == null) {
             this.content = null;
         } else {
             int size = content.size();
-            List newContent = createContentList(size);
+            List<Node> newContent = createContentList(size);
 
             for (int i = 0; i < size; i++) {
                 Object object = content.get(i);
@@ -262,7 +258,7 @@ public class DefaultDocument extends AbstractDocument {
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected List contentList() {
+    protected List<Node> contentList() {
         if (content == null) {
             content = createContentList();
 

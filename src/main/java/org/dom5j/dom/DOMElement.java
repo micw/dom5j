@@ -309,14 +309,14 @@ public class DOMElement extends DefaultElement implements org.w3c.dom.Element {
     }
 
     public NodeList getElementsByTagName(String name) {
-        ArrayList list = new ArrayList();
+        ArrayList<org.dom5j.Node> list = new ArrayList<org.dom5j.Node>();
         DOMNodeHelper.appendElementsByTagName(list, this, name);
 
         return DOMNodeHelper.createNodeList(list);
     }
 
     public NodeList getElementsByTagNameNS(String namespace, String lName) {
-        ArrayList list = new ArrayList();
+        ArrayList<org.dom5j.Node> list = new ArrayList<org.dom5j.Node>();
         DOMNodeHelper.appendElementsByTagNameNS(list, this, namespace, lName);
 
         return DOMNodeHelper.createNodeList(list);
@@ -344,7 +344,7 @@ public class DOMElement extends DefaultElement implements org.w3c.dom.Element {
     }
 
     protected Attribute attribute(String namespaceURI, String localName) {
-        List attributes = attributeList();
+        List<Attribute> attributes = attributeList();
         int size = attributes.size();
 
         for (int i = 0; i < size; i++) {

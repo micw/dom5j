@@ -9,10 +9,12 @@ package org.dom5j.tree;
 
 import java.util.List;
 
+import org.dom5j.Attribute;
 import org.dom5j.Branch;
 import org.dom5j.Document;
 import org.dom5j.Element;
 import org.dom5j.Namespace;
+import org.dom5j.Node;
 import org.dom5j.QName;
 
 /**
@@ -37,10 +39,10 @@ public class BaseElement extends AbstractElement {
     private Branch parentBranch;
 
     /** List of content nodes. */
-    protected List content;
+    protected List<Node> content;
 
     /** list of attributes */
-    protected List attributes;
+    protected List<Attribute> attributes;
 
     public BaseElement(String name) {
         this.qname = getDocumentFactory().createQName(name);
@@ -104,25 +106,25 @@ public class BaseElement extends AbstractElement {
         contentList().clear();
     }
 
-    public void setContent(List content) {
+    public void setContent(List<Node> content) {
         this.content = content;
 
         if (content instanceof ContentListFacade) {
-            this.content = ((ContentListFacade) content).getBackingList();
+            this.content = ((ContentListFacade<Node>) content).getBackingList();
         }
     }
 
-    public void setAttributes(List attributes) {
+    public void setAttributes(List<Attribute> attributes) {
         this.attributes = attributes;
 
         if (attributes instanceof ContentListFacade) {
-            this.attributes = ((ContentListFacade) attributes).getBackingList();
+            this.attributes = ((ContentListFacade<Attribute>) attributes).getBackingList();
         }
     }
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected List contentList() {
+    protected List<Node> contentList() {
         if (content == null) {
             content = createContentList();
         }
@@ -130,7 +132,7 @@ public class BaseElement extends AbstractElement {
         return content;
     }
 
-    protected List attributeList() {
+    protected List<Attribute> attributeList() {
         if (attributes == null) {
             attributes = createAttributeList();
         }
@@ -138,7 +140,7 @@ public class BaseElement extends AbstractElement {
         return attributes;
     }
 
-    protected List attributeList(int size) {
+    protected List<Attribute> attributeList(int size) {
         if (attributes == null) {
             attributes = createAttributeList(size);
         }
@@ -146,7 +148,7 @@ public class BaseElement extends AbstractElement {
         return attributes;
     }
 
-    protected void setAttributeList(List attributeList) {
+    protected void setAttributeList(List<Attribute> attributeList) {
         this.attributes = attributeList;
     }
 }

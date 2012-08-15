@@ -128,13 +128,13 @@ public class DOMNodeHelper {
             throws DOMException {
         if (node instanceof Branch) {
             Branch branch = (Branch) node;
-            List list = branch.content();
+            List<Node> list = branch.content();
             int index = list.indexOf(refChild);
 
             if (index < 0) {
                 branch.add((Node) newChild);
             } else {
-                list.add(index, newChild);
+                list.add(index, (Node)newChild);
             }
 
             return newChild;
@@ -149,7 +149,7 @@ public class DOMNodeHelper {
             throws DOMException {
         if (node instanceof Branch) {
             Branch branch = (Branch) node;
-            List list = branch.content();
+            List<Node> list = branch.content();
             int index = list.indexOf(oldChild);
 
             if (index < 0) {
@@ -158,7 +158,7 @@ public class DOMNodeHelper {
                                 + node);
             }
 
-            list.set(index, newChild);
+            list.set(index, (Node)newChild);
 
             return oldChild;
         } else {
@@ -361,7 +361,7 @@ public class DOMNodeHelper {
 
     // Branch API
     // -------------------------------------------------------------------------
-    public static void appendElementsByTagName(List list, Branch parent,
+    public static void appendElementsByTagName(List<Node> list, Branch parent,
             String name) {
         final boolean isStar = "*".equals(name);
 
@@ -380,7 +380,7 @@ public class DOMNodeHelper {
         }
     }
 
-    public static void appendElementsByTagNameNS(List list, Branch parent,
+    public static void appendElementsByTagNameNS(List<Node> list, Branch parent,
             String namespace, String localName) {
         final boolean isStarNS = "*".equals(namespace);
         final boolean isStar = "*".equals(localName);
@@ -409,7 +409,7 @@ public class DOMNodeHelper {
 
     // Helper methods
     // -------------------------------------------------------------------------
-    public static NodeList createNodeList(final List list) {
+    public static NodeList createNodeList(final List<Node> list) {
         return new NodeList() {
             public org.w3c.dom.Node item(int index) {
                 if (index >= getLength()) {
@@ -420,7 +420,7 @@ public class DOMNodeHelper {
                      */
                     return null;
                 } else {
-                    return DOMNodeHelper.asDOMNode((Node) list.get(index));
+                    return DOMNodeHelper.asDOMNode(list.get(index));
                 }
             }
 

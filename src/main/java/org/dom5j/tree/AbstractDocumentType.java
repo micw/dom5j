@@ -15,6 +15,7 @@ import java.util.List;
 import org.dom5j.DocumentType;
 import org.dom5j.Element;
 import org.dom5j.Visitor;
+import org.dom5j.dtd.DTDDeclaration;
 
 /**
  * <p>
@@ -59,14 +60,14 @@ public abstract class AbstractDocumentType extends AbstractNode implements
      * @return DOCUMENT ME!
      */
     public String getText() {
-        List list = getInternalDeclarations();
+        List<DTDDeclaration> list = getInternalDeclarations();
 
         if ((list != null) && (list.size() > 0)) {
             StringBuffer buffer = new StringBuffer();
-            Iterator iter = list.iterator();
+            Iterator<DTDDeclaration> iter = list.iterator();
 
             if (iter.hasNext()) {
-                Object decl = iter.next();
+                DTDDeclaration decl = iter.next();
                 buffer.append(decl.toString());
 
                 while (iter.hasNext()) {
@@ -143,12 +144,12 @@ public abstract class AbstractDocumentType extends AbstractNode implements
             writer.write("\"");
         }
 
-        List list = getInternalDeclarations();
+        List<DTDDeclaration> list = getInternalDeclarations();
 
         if ((list != null) && (list.size() > 0)) {
             writer.write(" [");
 
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
+            for (Iterator<DTDDeclaration> iter = list.iterator(); iter.hasNext();) {
                 Object decl = iter.next();
                 writer.write("\n  ");
                 writer.write(decl.toString());

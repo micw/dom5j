@@ -152,7 +152,7 @@ import java.util.Set;
  * 
  */
 
-class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
+class ConcurrentReaderHashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneable,
         Serializable {
 
     /*
@@ -206,7 +206,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * Get ref to table; the reference and the cells it accesses will be at
      * least as fresh as from last use of barrierLock
      */
-    protected final Entry[] getTableForReading() {
+    protected final Entry<K,V>[] getTableForReading() {
         synchronized (barrierLock) {
             return table;
         }
@@ -241,7 +241,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
     /**
      * The hash table data.
      */
-    protected transient Entry[] table;
+    protected transient Entry<K,V>[] table;
 
     /**
      * The total number of mappings in the hash table.
@@ -316,6 +316,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      *             or if the load factor is nonpositive.
      */
 
+    @SuppressWarnings("unchecked")
     public ConcurrentReaderHashMap(int initialCapacity, float loadFactor) {
         if (loadFactor <= 0)
             throw new IllegalArgumentException("Illegal Load factor: "
@@ -357,7 +358,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * or 16 (whichever is greater), and a default load factor.
      */
 
-    public ConcurrentReaderHashMap(Map t) {
+    public ConcurrentReaderHashMap(Map<K,V> t) {
         this(Math.max((int) (t.size() / DEFAULT_LOAD_FACTOR) + 1, 16),
                 DEFAULT_LOAD_FACTOR);
         putAll(t);
@@ -396,7 +397,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * @see #put(Object, Object)
      */
 
-    public Object get(Object key) {
+    public V get(Object key) {
 
         // throw null pointer exception if key null
         int hash = hash(key);
@@ -409,10 +410,10 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
          * synchronize if there have been concurrent modifications.
          */
 
-        Entry[] tab = table;
+        Entry<K,V>[] tab = table;
         int index = hash & (tab.length - 1);
-        Entry first = tab[index];
-        Entry e = first;
+        Entry<K,V> first = tab[index];
+        Entry<K,V> e = first;
 
         for (;;) {
             if (e == null) {
@@ -420,7 +421,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
                 // If key apparently not there, check to
                 // make sure this was a valid read
 
-                Entry[] reread = getTableForReading();
+                Entry<K,V>[] reread = getTableForReading();
                 if (tab == reread && first == tab[index])
                     return null;
                 else {
@@ -432,7 +433,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
             }
 
             else if (e.hash == hash && eq(key, e.key)) {
-                Object value = e.value;
+                V value = e.value;
                 if (value != null)
                     return value;
 
@@ -489,15 +490,15 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * @see #get(Object)
      */
 
-    public Object put(Object key, Object value) {
+    public V put(K key, V value) {
         if (value == null)
             throw new NullPointerException();
 
         int hash = hash(key);
-        Entry[] tab = table;
+        Entry<K,V>[] tab = table;
         int index = hash & (tab.length - 1);
-        Entry first = tab[index];
-        Entry e;
+        Entry<K,V> first = tab[index];
+        Entry<K,V> e;
 
         for (e = first; e != null; e = e.next)
             if (e.hash == hash && eq(key, e.key))
@@ -509,7 +510,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
                     // make sure we are adding to correct list
                     if (first == tab[index]) {
                         // Add to front of list
-                        Entry newEntry = new Entry(hash, key, value, first);
+                        Entry<K,V> newEntry = new Entry<K,V>(hash, key, value, first);
                         tab[index] = newEntry;
                         if (++count >= threshold)
                             rehash();
@@ -518,7 +519,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
                         return null;
                     }
                 } else {
-                    Object oldValue = e.value;
+                    V oldValue = e.value;
                     if (first == tab[index] && oldValue != null) {
                         e.value = value;
                         return oldValue;
@@ -535,16 +536,16 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * Continuation of put(), called only when synch lock is held and
      * interference has been detected.
      */
-    protected Object sput(Object key, Object value, int hash) {
+    protected V sput(K key, V value, int hash) {
 
-        Entry[] tab = table;
+        Entry<K,V>[] tab = table;
         int index = hash & (tab.length - 1);
-        Entry first = tab[index];
-        Entry e = first;
+        Entry<K,V> first = tab[index];
+        Entry<K,V> e = first;
 
         for (;;) {
             if (e == null) {
-                Entry newEntry = new Entry(hash, key, value, first);
+                Entry<K,V> newEntry = new Entry<K,V>(hash, key, value, first);
                 tab[index] = newEntry;
                 if (++count >= threshold)
                     rehash();
@@ -552,7 +553,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
                     recordModification(newEntry);
                 return null;
             } else if (e.hash == hash && eq(key, e.key)) {
-                Object oldValue = e.value;
+                V oldValue = e.value;
                 e.value = value;
                 return oldValue;
             } else
@@ -566,7 +567,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * this map exceeds its capacity and load factor.
      */
     protected void rehash() {
-        Entry[] oldTable = table;
+        Entry<K,V>[] oldTable = table;
         int oldCapacity = oldTable.length;
         if (oldCapacity >= MAXIMUM_CAPACITY) {
             threshold = Integer.MAX_VALUE; // avoid retriggering
@@ -577,7 +578,8 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
         int mask = newCapacity - 1;
         threshold = (int) (newCapacity * loadFactor);
 
-        Entry[] newTable = new Entry[newCapacity];
+        @SuppressWarnings("unchecked")
+        Entry<K,V>[] newTable = new Entry[newCapacity];
         /*
          * Reclassify nodes in each list to new Map. Because we are using
          * power-of-two expansion, the elements from each bin must either stay
@@ -593,11 +595,11 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
         for (int i = 0; i < oldCapacity; i++) {
             // We need to guarantee that any existing reads of old Map can
             // proceed. So we cannot yet null out each bin.
-            Entry e = oldTable[i];
+            Entry<K,V> e = oldTable[i];
 
             if (e != null) {
                 int idx = e.hash & mask;
-                Entry next = e.next;
+                Entry<K,V> next = e.next;
 
                 // Single node on list
                 if (next == null)
@@ -605,9 +607,9 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
 
                 else {
                     // Reuse trailing consecutive sequence of all same bit
-                    Entry lastRun = e;
+                    Entry<K,V> lastRun = e;
                     int lastIdx = idx;
-                    for (Entry last = next; last != null; last = last.next) {
+                    for (Entry<K,V> last = next; last != null; last = last.next) {
                         int k = last.hash & mask;
                         if (k != lastIdx) {
                             lastIdx = k;
@@ -617,9 +619,9 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
                     newTable[lastIdx] = lastRun;
 
                     // Clone all remaining nodes
-                    for (Entry p = e; p != lastRun; p = p.next) {
+                    for (Entry<K,V> p = e; p != lastRun; p = p.next) {
                         int k = p.hash & mask;
-                        newTable[k] = new Entry(p.hash, p.key, p.value,
+                        newTable[k] = new Entry<K,V>(p.hash, p.key, p.value,
                                 newTable[k]);
                     }
                 }
@@ -642,7 +644,9 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      *                if the key is <code>null</code>.
      */
 
-    public Object remove(Object key) {
+    @Override
+    public V remove(Object key)
+    {
         /*
          * Find the entry, then 1. Set value field to null, to force get() to
          * retry 2. Rebuild the list without this entry. All entries following
@@ -652,10 +656,10 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
          */
 
         int hash = hash(key);
-        Entry[] tab = table;
+        Entry<K,V>[] tab = table;
         int index = hash & (tab.length - 1);
-        Entry first = tab[index];
-        Entry e = first;
+        Entry<K,V> first = tab[index];
+        Entry<K,V> e = first;
 
         for (e = first; e != null; e = e.next)
             if (e.hash == hash && eq(key, e.key))
@@ -667,14 +671,14 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
                     if (first == tab[index])
                         return null;
                 } else {
-                    Object oldValue = e.value;
+                    V oldValue = e.value;
                     if (first == tab[index] && oldValue != null) {
                         e.value = null;
                         count--;
 
-                        Entry head = e.next;
-                        for (Entry p = first; p != e; p = p.next)
-                            head = new Entry(p.hash, p.key, p.value, head);
+                        Entry<K,V> head = e.next;
+                        for (Entry<K,V> p = first; p != e; p = p.next)
+                            head = new Entry<K,V>(p.hash, p.key, p.value, head);
 
                         tab[index] = head;
                         recordModification(head);
@@ -693,19 +697,19 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * interference has been detected.
      */
 
-    protected Object sremove(Object key, int hash) {
-        Entry[] tab = table;
+    protected V sremove(Object key, int hash) {
+        Entry<K,V>[] tab = table;
         int index = hash & (tab.length - 1);
-        Entry first = tab[index];
+        Entry<K,V> first = tab[index];
 
-        for (Entry e = first; e != null; e = e.next) {
+        for (Entry<K,V> e = first; e != null; e = e.next) {
             if (e.hash == hash && eq(key, e.key)) {
-                Object oldValue = e.value;
+                V oldValue = e.value;
                 e.value = null;
                 count--;
-                Entry head = e.next;
-                for (Entry p = first; p != e; p = p.next)
-                    head = new Entry(p.hash, p.key, p.value, head);
+                Entry<K,V> head = e.next;
+                for (Entry<K,V> p = first; p != e; p = p.next)
+                    head = new Entry<K,V>(p.hash, p.key, p.value, head);
 
                 tab[index] = head;
                 recordModification(head);
@@ -732,10 +736,10 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
         if (value == null)
             throw new NullPointerException();
 
-        Entry tab[] = getTableForReading();
+        Entry<K,V> tab[] = getTableForReading();
 
         for (int i = 0; i < tab.length; ++i) {
-            for (Entry e = tab[i]; e != null; e = e.next)
+            for (Entry<K,V> e = tab[i]; e != null; e = e.next)
                 if (value.equals(e.value))
                     return true;
         }
@@ -777,7 +781,9 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      *            Mappings to be stored in this map.
      */
 
-    public synchronized void putAll(Map t) {
+    @SuppressWarnings("unchecked")
+    @Override
+    public synchronized void putAll(Map<? extends K, ? extends V> t) {
         int n = t.size();
         if (n == 0)
             return;
@@ -788,10 +794,10 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
         while (n >= threshold)
             rehash();
 
-        for (Iterator it = t.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
-            Object key = entry.getKey();
-            Object value = entry.getValue();
+        for (Iterator<?> it = t.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<K,V> entry = (Map.Entry<K,V>) it.next();
+            K key = entry.getKey();
+            V value = entry.getValue();
             put(key, value);
         }
     }
@@ -800,12 +806,12 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * Removes all mappings from this map.
      */
     public synchronized void clear() {
-        Entry tab[] = table;
+        Entry<K,V> tab[] = table;
         for (int i = 0; i < tab.length; ++i) {
 
             // must invalidate all to force concurrent get's to wait and then
             // retry
-            for (Entry e = tab[i]; e != null; e = e.next)
+            for (Entry<K,V> e = tab[i]; e != null; e = e.next)
                 e.value = null;
 
             tab[i] = null;
@@ -821,22 +827,23 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * @return a shallow copy of this map.
      */
 
+    @SuppressWarnings("unchecked")
     public synchronized Object clone() {
         try {
-            ConcurrentReaderHashMap t = (ConcurrentReaderHashMap) super.clone();
+            ConcurrentReaderHashMap<K,V> t = (ConcurrentReaderHashMap<K,V>) super.clone();
 
             t.keySet = null;
             t.entrySet = null;
             t.values = null;
 
-            Entry[] tab = table;
+            Entry<K,V>[] tab = table;
             t.table = new Entry[tab.length];
-            Entry[] ttab = t.table;
+            Entry<K,V>[] ttab = t.table;
 
             for (int i = 0; i < tab.length; ++i) {
-                Entry first = null;
-                for (Entry e = tab[i]; e != null; e = e.next)
-                    first = new Entry(e.hash, e.key, e.value, first);
+                Entry<K,V> first = null;
+                for (Entry<K,V> e = tab[i]; e != null; e = e.next)
+                    first = new Entry<K,V>(e.hash, e.key, e.value, first);
                 ttab[i] = first;
             }
 
@@ -849,11 +856,11 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
 
     // Views
 
-    protected transient Set keySet = null;
+    protected transient Set<K> keySet = null;
 
-    protected transient Set entrySet = null;
+    protected transient Set<java.util.Map.Entry<K,V>> entrySet = null;
 
-    protected transient Collection values = null;
+    protected transient Collection<V> values = null;
 
     /**
      * Returns a set view of the keys contained in this map. The set is backed
@@ -867,13 +874,13 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * @return a set view of the keys contained in this map.
      */
 
-    public Set keySet() {
-        Set ks = keySet;
+    public Set<K> keySet() {
+        Set<K> ks = keySet;
         return (ks != null) ? ks : (keySet = new KeySet());
     }
 
-    private class KeySet extends AbstractSet {
-        public Iterator iterator() {
+    private class KeySet extends AbstractSet<K> {
+        public Iterator<K> iterator() {
             return new KeyIterator();
         }
 
@@ -907,13 +914,13 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * @return a collection view of the values contained in this map.
      */
 
-    public Collection values() {
-        Collection vs = values;
+    public Collection<V> values() {
+        Collection<V> vs = values;
         return (vs != null) ? vs : (values = new Values());
     }
 
-    private class Values extends AbstractCollection {
-        public Iterator iterator() {
+    private class Values extends AbstractCollection<V> {
+        public Iterator<V> iterator() {
             return new ValueIterator();
         }
 
@@ -944,29 +951,33 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * @return a collection view of the mappings contained in this map.
      */
 
-    public Set entrySet() {
-        Set es = entrySet;
+    @Override
+    public Set<java.util.Map.Entry<K, V>> entrySet()
+    {
+        Set<java.util.Map.Entry<K, V>> es = entrySet;
         return (es != null) ? es : (entrySet = new EntrySet());
     }
 
-    private class EntrySet extends AbstractSet {
-        public Iterator iterator() {
+    private class EntrySet extends AbstractSet<java.util.Map.Entry<K,V>> {
+        public Iterator<java.util.Map.Entry<K,V>> iterator() {
             return new HashIterator();
         }
 
+        @SuppressWarnings("unchecked")
         public boolean contains(Object o) {
             if (!(o instanceof Map.Entry))
                 return false;
-            Map.Entry entry = (Map.Entry) o;
+            java.util.Map.Entry<K,V> entry = (java.util.Map.Entry<K,V>) o;
             Object v = ConcurrentReaderHashMap.this.get(entry.getKey());
             return v != null && v.equals(entry.getValue());
         }
 
+        @SuppressWarnings("unchecked")
         public boolean remove(Object o) {
             if (!(o instanceof Map.Entry))
                 return false;
             return ConcurrentReaderHashMap.this
-                    .findAndRemoveEntry((Map.Entry) o);
+                    .findAndRemoveEntry((Map.Entry<K,V>) o);
         }
 
         public int size() {
@@ -981,7 +992,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
     /**
      * Helper method for entrySet.remove
      */
-    protected synchronized boolean findAndRemoveEntry(Map.Entry entry) {
+    protected synchronized boolean findAndRemoveEntry(Map.Entry<K,V> entry) {
         Object key = entry.getKey();
         Object v = get(key);
         if (v != null && v.equals(entry.getValue())) {
@@ -1000,7 +1011,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * @see #keySet()
      * @see Map
      */
-    public Enumeration keys() {
+    public Enumeration<K> keys() {
         return new KeyIterator();
     }
 
@@ -1015,7 +1026,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * @see Map
      */
 
-    public Enumeration elements() {
+    public Enumeration<V> elements() {
         return new ValueIterator();
     }
 
@@ -1023,7 +1034,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * ConcurrentReaderHashMap collision list entry.
      */
 
-    protected static class Entry implements Map.Entry {
+    protected static class Entry<K,V> implements Map.Entry<K,V> {
 
         /*
          * The use of volatile for value field ensures that we can detect status
@@ -1033,13 +1044,13 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
 
         protected final int hash;
 
-        protected final Object key;
+        protected final K key;
 
-        protected final Entry next;
+        protected final Entry<K,V> next;
 
-        protected volatile Object value;
+        protected volatile V value;
 
-        Entry(int hash, Object key, Object value, Entry next) {
+        Entry(int hash, K key, V value, Entry<K,V> next) {
             this.hash = hash;
             this.key = key;
             this.next = next;
@@ -1048,7 +1059,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
 
         // Map.Entry Ops
 
-        public Object getKey() {
+        public K getKey() {
             return key;
         }
 
@@ -1064,7 +1075,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
          * @return the current value, or null if the entry has been detectably
          *         removed.
          */
-        public Object getValue() {
+        public V getValue() {
             return value;
         }
 
@@ -1090,18 +1101,19 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
          * 
          */
 
-        public Object setValue(Object value) {
+        public V setValue(V value) {
             if (value == null)
                 throw new NullPointerException();
-            Object oldValue = this.value;
+            V oldValue = this.value;
             this.value = value;
             return oldValue;
         }
 
+        @SuppressWarnings("unchecked")
         public boolean equals(Object o) {
             if (!(o instanceof Map.Entry))
                 return false;
-            Map.Entry e = (Map.Entry) o;
+            Map.Entry<K,V> e = (Map.Entry<K,V>) o;
             return (key.equals(e.getKey()) && value.equals(e.getValue()));
         }
 
@@ -1115,20 +1127,20 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
 
     }
 
-    protected class HashIterator implements Iterator, Enumeration {
-        protected final Entry[] tab; // snapshot of table
+    protected abstract class AbstractHashIterator<T> implements Iterator<T>, Enumeration<T> {
+        protected final Entry<K,V>[] tab; // snapshot of table
 
         protected int index; // current slot
 
-        protected Entry entry = null; // current node of slot
+        protected Entry<K,V> entry = null; // current node of slot
 
-        protected Object currentKey; // key for current node
+        protected K currentKey; // key for current node
 
-        protected Object currentValue; // value for current node
+        protected V currentValue; // value for current node
 
-        protected Entry lastReturned = null; // last node returned by next
+        protected Entry<K,V> lastReturned = null; // last node returned by next
 
-        protected HashIterator() {
+        protected AbstractHashIterator() {
             tab = ConcurrentReaderHashMap.this.getTableForReading();
             index = tab.length - 1;
         }
@@ -1137,7 +1149,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
             return hasNext();
         }
 
-        public Object nextElement() {
+        public T nextElement() {
             return next();
         }
 
@@ -1152,7 +1164,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
 
             for (;;) {
                 if (entry != null) {
-                    Object v = entry.value;
+                    V v = entry.value;
                     if (v != null) {
                         currentKey = entry.key;
                         currentValue = v;
@@ -1165,23 +1177,23 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
                     entry = tab[index--];
 
                 if (entry == null) {
-                    currentKey = currentValue = null;
+                    currentKey = null;
+                    currentValue = null;
                     return false;
                 }
             }
         }
 
-        protected Object returnValueOfNext() {
-            return entry;
-        }
+        protected abstract T returnValueOfNext();
 
-        public Object next() {
+        public T next() {
             if (currentKey == null && !hasNext())
                 throw new NoSuchElementException();
 
-            Object result = returnValueOfNext();
+            T result = returnValueOfNext();
             lastReturned = entry;
-            currentKey = currentValue = null;
+            currentKey = null;
+            currentValue = null;
             entry = entry.next;
             return result;
         }
@@ -1195,14 +1207,21 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
 
     }
 
-    protected class KeyIterator extends HashIterator {
-        protected Object returnValueOfNext() {
+    protected class HashIterator extends AbstractHashIterator<java.util.Map.Entry<K,V>> {
+        @Override
+        protected Entry<K, V> returnValueOfNext() {
+            return entry;
+        }
+    }
+    
+    protected class KeyIterator extends AbstractHashIterator<K> {
+        protected K returnValueOfNext() {
             return currentKey;
         }
     }
 
-    protected class ValueIterator extends HashIterator {
-        protected Object returnValueOfNext() {
+    protected class ValueIterator extends AbstractHashIterator<V> {
+        protected V returnValueOfNext() {
             return currentValue;
         }
     }
@@ -1233,7 +1252,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
 
         // Write out keys and values (alternating)
         for (int index = table.length - 1; index >= 0; index--) {
-            Entry entry = table[index];
+            Entry<K,V> entry = table[index];
 
             while (entry != null) {
                 s.writeObject(entry.key);
@@ -1247,6 +1266,7 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
      * Reconstitute the <tt>ConcurrentReaderHashMap</tt> instance from a
      * stream (i.e., deserialize it).
      */
+    @SuppressWarnings("unchecked")
     private synchronized void readObject(java.io.ObjectInputStream s)
             throws IOException, ClassNotFoundException {
         // Read in the threshold, loadfactor, and any hidden stuff
@@ -1261,8 +1281,8 @@ class ConcurrentReaderHashMap extends AbstractMap implements Map, Cloneable,
 
         // Read the keys and values, and put the mappings in the table
         for (int i = 0; i < size; i++) {
-            Object key = s.readObject();
-            Object value = s.readObject();
+            K key = (K) s.readObject();
+            V value = (V) s.readObject();
             put(key, value);
         }
     }
