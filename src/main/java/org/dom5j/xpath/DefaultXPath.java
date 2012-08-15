@@ -85,7 +85,7 @@ public class DefaultXPath implements org.dom5j.XPath, NodeFilter, Serializable {
         return namespaceContext;
     }
 
-    public void setNamespaceURIs(Map map) {
+    public void setNamespaceURIs(Map<String,String> map) {
         setNamespaceContext(new SimpleNamespaceContext(map));
     }
 
@@ -106,7 +106,7 @@ public class DefaultXPath implements org.dom5j.XPath, NodeFilter, Serializable {
         try {
             setNSContext(context);
 
-            List answer = xpath.selectNodes(context);
+            List<?> answer = xpath.selectNodes(context);
 
             if ((answer != null) && (answer.size() == 1)) {
                 return answer.get(0);
@@ -124,28 +124,29 @@ public class DefaultXPath implements org.dom5j.XPath, NodeFilter, Serializable {
         return evaluate(context);
     }
 
-    public List selectNodes(Object context) {
+    @SuppressWarnings("unchecked")
+    public List<Node> selectNodes(Object context) {
         try {
             setNSContext(context);
 
-            return xpath.selectNodes(context);
+            return (List<Node>)xpath.selectNodes(context);
         } catch (JaxenException e) {
             handleJaxenException(e);
 
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 
-    public List selectNodes(Object context, org.dom5j.XPath sortXPath) {
-        List answer = selectNodes(context);
+    public List<Node> selectNodes(Object context, org.dom5j.XPath sortXPath) {
+        List<Node> answer = selectNodes(context);
         sortXPath.sort(answer);
 
         return answer;
     }
 
-    public List selectNodes(Object context, org.dom5j.XPath sortXPath,
+    public List<Node> selectNodes(Object context, org.dom5j.XPath sortXPath,
             boolean distinct) {
-        List answer = selectNodes(context);
+        List<Node> answer = selectNodes(context);
         sortXPath.sort(answer, distinct);
 
         return answer;
@@ -220,7 +221,7 @@ public class DefaultXPath implements org.dom5j.XPath, NodeFilter, Serializable {
      * @param list
      *            is the list of Nodes to sort
      */
-    public void sort(List list) {
+    public void sort(List<Node> list) {
         sort(list, false);
     }
 
@@ -236,10 +237,10 @@ public class DefaultXPath implements org.dom5j.XPath, NodeFilter, Serializable {
      *            if true then duplicate values (using the sortXPath for
      *            comparisions) will be removed from the List
      */
-    public void sort(List list, boolean distinct) {
+    public void sort(List<Node> list, boolean distinct) {
         if ((list != null) && !list.isEmpty()) {
             int size = list.size();
-            HashMap sortValues = new HashMap(size);
+            HashMap<Node,Object> sortValues = new HashMap<Node,Object>(size);
 
             for (int i = 0; i < size; i++) {
                 Object object = list.get(i);
@@ -259,11 +260,12 @@ public class DefaultXPath implements org.dom5j.XPath, NodeFilter, Serializable {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public boolean matches(Node node) {
         try {
             setNSContext(node);
 
-            List answer = xpath.selectNodes(node);
+            List<Node> answer = (List<Node>) xpath.selectNodes(node);
 
             if ((answer != null) && (answer.size() > 0)) {
                 Object item = answer.get(0);
@@ -291,7 +293,8 @@ public class DefaultXPath implements org.dom5j.XPath, NodeFilter, Serializable {
      * @param sortValues
      *            DOCUMENT ME!
      */
-    protected void sort(List list, final Map sortValues) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    protected void sort(List<?> list, final Map<?,?> sortValues) {
         Collections.sort(list, new Comparator() {
             public int compare(Object o1, Object o2) {
                 o1 = sortValues.get(o1);
@@ -324,11 +327,11 @@ public class DefaultXPath implements org.dom5j.XPath, NodeFilter, Serializable {
      * @param sortValues
      *            DOCUMENT ME!
      */
-    protected void removeDuplicates(List list, Map sortValues) {
+    protected void removeDuplicates(List<?> list, Map<?,?> sortValues) {
         // remove distinct
-        HashSet distinctValues = new HashSet();
+        HashSet<Object> distinctValues = new HashSet<Object>();
 
-        for (Iterator iter = list.iterator(); iter.hasNext();) {
+        for (Iterator<?> iter = list.iterator(); iter.hasNext();) {
             Object node = iter.next();
             Object value = sortValues.get(node);
 

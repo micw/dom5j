@@ -116,7 +116,7 @@ public class ProxyXmlStartTag implements XmlStartTag {
 
     public String getAttributeValueFromRawName(String rawName) {
         if (element != null) {
-            for (Iterator iter = element.attributeIterator(); iter.hasNext();) {
+            for (Iterator<Attribute> iter = element.attributeIterator(); iter.hasNext();) {
                 Attribute attribute = (Attribute) iter.next();
 
                 if (rawName.equals(attribute.getQualifiedName())) {
@@ -131,7 +131,7 @@ public class ProxyXmlStartTag implements XmlStartTag {
     public String getAttributeValueFromName(String namespaceURI,
             String localName) {
         if (element != null) {
-            for (Iterator iter = element.attributeIterator(); iter.hasNext();) {
+            for (Iterator<Attribute> iter = element.attributeIterator(); iter.hasNext();) {
                 Attribute attribute = (Attribute) iter.next();
 
                 if (namespaceURI.equals(attribute.getNamespaceURI())
@@ -209,7 +209,7 @@ public class ProxyXmlStartTag implements XmlStartTag {
 
     public void removeAttributes() throws XmlPullParserException {
         if (element != null) {
-            element.setAttributes(new ArrayList());
+            element.setAttributes(new ArrayList<Attribute>());
 
             // ##### FIXME
             // adding this method would be nice...
@@ -255,7 +255,7 @@ public class ProxyXmlStartTag implements XmlStartTag {
             throws XmlPullParserException {
         if (element != null) {
             Attribute attribute = null;
-            Iterator it = element.attributeIterator();
+            Iterator<Attribute> it = element.attributeIterator();
             while (it.hasNext()) {
                 Attribute current = (Attribute) it.next();
                 if (current.getQualifiedName().equals(rawName)) {

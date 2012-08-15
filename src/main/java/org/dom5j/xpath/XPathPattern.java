@@ -61,7 +61,7 @@ public class XPathPattern implements org.dom5j.rule.Pattern {
 
     public boolean matches(Node node) {
         try {
-            ArrayList list = new ArrayList(1);
+            ArrayList<Node> list = new ArrayList<Node>(1);
             list.add(node);
             context.setNodeSet(list);
 
